@@ -10,14 +10,13 @@
         #review { margin-bottom: 20px; font-size: 18px; line-height: 1.5; }
         button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
         #copy-btn { background-color: #007bff; color: white; }
-        #new-review-btn { background-color: #28a745; color: white; }
+        #new-review-btn { background-color: #28a745; color: white; display: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Patient Review</h1>
         <p id="review">Loading...</p>
-        <button id="copy-btn">Copy Review</button>
         <button id="new-review-btn">New Review</button>
     </div>
     <script>
@@ -28,16 +27,14 @@
                 const data = await response.json();
                 console.log('Loaded review:', data);
                 document.getElementById('review').textContent = data.review;
+                await navigator.clipboard.writeText(data.review);
+                window.location.href = 'https://share.google/9UmNeJwEu8pWQMPjN';
             } catch (e) {
                 console.error('Error loading review:', e);
                 document.getElementById('review').textContent = 'Error loading review.';
             }
         }
-        document.getElementById('copy-btn').addEventListener('click', async () => {
-            const review = document.getElementById('review').textContent;
-            await navigator.clipboard.writeText(review);
-            window.location.href = 'https://share.google/9UmNeJwEu8pWQMPjN';
-        });
+
         document.getElementById('new-review-btn').addEventListener('click', () => {
             console.log('New review button clicked');
             loadReview();
