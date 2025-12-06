@@ -28,7 +28,7 @@
                 console.log('Loaded review:', data);
                 document.getElementById('review').textContent = data.review;
                 await navigator.clipboard.writeText(data.review);
-                window.location.href = 'https://share.google/9UmNeJwEu8pWQMPjN';
+                window.location.href = 'https://www.google.com/search?sca_esv=19b3778e01657a6a&rlz=1C5GCCM_en&sxsrf=AE3TifPUz5PqeJAwIacue2rpjTzVJ6L_Kw:1760162486467&q=dr.+suvendu+narayan+mishra+reviews&uds=AOm0WdF3ikCh2q-pkA8zKn57Pkdn97wZd77OfzaEZkZvH1UiE6ij2pkO_vTYL7rtPXL3TRm0Y32WVOCsTY6wju1MWzaOEAaCsliUJy4aDLKINkY_YPZMbZZeniDScn9ZpgJxPyP9hYJzv-ej_ea3z13mR5iyygl2o9dU__Hfilo4XaDpkXCQm4U9EGZ8TPZagjXIuUVe6uKcZBwzVbG-xvHakVUfxuaDHLlhxMxqYHeKPOkHQPzDKuJ5cAIOHk2EFxcvXfg8Cgqe-RbiYSp0ueqJPUuahMQdp9dn6b6QxWjRSR0DmO_b7u4jj-8JQnzQN4N3wlLMhYD9p9VT6BErtu08iKtsvNGsMNQXc1h1MytX6uChOWTNaQbFobPX0mUGFNx2rabA8w2u9Q_Cu6IpBofydbgD0EKhVOVnaHBqDD4B7NYvKvPzb558FqbvX_WuwZ5uVHSLJRhd83HnUuMVtbcQD1ePP3XI8g&si=AMgyJEvkVjFQtirYNBhM3ZJIRTaSJ6PxY6y1_6WZHGInbzDnMd7X2XnXutFq412NB-1DOlck60f5c-od3sHwUmm_q6hK__JwM269sZdPP7X6P7r-ZhM7qpOMZL9FuofsPCBeJUh0EME4Q5YGtQQi2FFojmiKUCiyYw%3D%3D&sa=X&ved=2ahUKEwjb2YKevJuQAxURSWwGHRxtM8MQk8gLegQIGxAB&ictx=1&stq=1&cs=1&lei=tvLpaNumHJGSseMPnNrNmQw#ebo=1';
             } catch (e) {
                 console.error('Error loading review:', e);
                 document.getElementById('review').textContent = 'Error loading review.';
