@@ -1,2 +1,4 @@
 Flask
 google-generativeai
+firebase-admin
+qrcode[pil]
