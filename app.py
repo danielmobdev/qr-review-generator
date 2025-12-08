@@ -14,12 +14,6 @@ cred_json = os.getenv('FIREBASE_SERVICE_ACCOUNT_KEY')
 if cred_json:
     cred = credentials.Certificate(json.loads(cred_json))
     firebase_admin.initialize_app(cred)
-elif os.path.exists('firebase_json_key/dan-ai-qr-firebase-adminsdk-fbsvc-3807174eec.json'):
-    with open('firebase_json_key/dan-ai-qr-firebase-adminsdk-fbsvc-3807174eec.json') as f:
-        cred = credentials.Certificate(json.load(f))
-    firebase_admin.initialize_app(cred)
-else:
-    firebase_admin.initialize_app()
 
 db = firestore.client()
 
