@@ -1,0 +1,6 @@
+firebase.json
+*.env
+*serviceAccount*.json
+*.key
+*.pem
+firebase_json_key/
