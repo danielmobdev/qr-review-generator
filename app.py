@@ -4,6 +4,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import os
 import json
+import base64
 import qrcode
 import re
 
@@ -14,7 +15,14 @@ raw = os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY")
 if not raw:
     raise ValueError("Firebase not initialized. Check FIREBASE_SERVICE_ACCOUNT_KEY")
 
-cred = credentials.Certificate(json.loads(raw))
+# Try to decode as Base64, fallback to plain JSON
+try:
+    decoded = base64.b64decode(raw).decode('utf-8')
+    cred_dict = json.loads(decoded)
+except:
+    cred_dict = json.loads(raw)
+
+cred = credentials.Certificate(cred_dict)
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
