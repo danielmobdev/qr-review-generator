@@ -12,8 +12,12 @@ app = Flask(__name__)
 # Firebase init
 cred_json = os.getenv('FIREBASE_SERVICE_ACCOUNT_KEY')
 if cred_json:
-    cred = credentials.Certificate(json.loads(cred_json))
-    firebase_admin.initialize_app(cred)
+    try:
+        cred = credentials.Certificate(json.loads(cred_json))
+        firebase_admin.initialize_app(cred)
+    except Exception as e:
+        print("Firebase init failed", e)
+        raise
 
 db = firestore.client()
 
