@@ -19,6 +19,9 @@ if cred_json:
         print("Firebase init failed", e)
         raise
 
+if not firebase_admin._apps:
+    raise ValueError("Firebase not initialized. Check FIREBASE_SERVICE_ACCOUNT_KEY")
+
 db = firestore.client()
 
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
