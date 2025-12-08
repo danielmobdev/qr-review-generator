@@ -10,6 +10,10 @@ import re
 
 app = Flask(__name__)
 
+# TEMP diagnostic
+print("ENV FIREBASE_SERVICE_ACCOUNT_KEY:", bool(os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY")))
+print("ENV FIREBASE_SERVICE_ACCOUNT_KEY_BASE64:", bool(os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY_BASE64")))
+
 # Firebase init (Safe for Render + Base64 + No Double Init)
 if not firebase_admin._apps:
     raw = os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY") or os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY_BASE64")
