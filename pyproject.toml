@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "qr-review-generator"
+version = "0.1.0"
+description = "QR Review Generator SaaS"
+authors = ["Daniel <daniel@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Flask = "*"
+google-generativeai = "*"
+firebase-admin = "*"
+qrcode = {extras = ["pil"], version = "*"}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
