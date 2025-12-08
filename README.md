@@ -84,7 +84,7 @@ qr-review-generator/
 4. **Environment Variables**
    ```bash
    export GEMINI_API_KEY=your_gemini_key
-   export FIREBASE_HOSTING_DOMAIN=dan-ai-qr.web.app
+   export FIREBASE_HOSTING_DOMAIN=qr-review-generator.onrender.com
    ```
 
 5. **Run Locally**
@@ -190,7 +190,7 @@ Adds credits to business.
 ### Environment Variables
 - `GEMINI_API_KEY`: Google Gemini API key
 - `FIREBASE_SERVICE_ACCOUNT_KEY`: Service account JSON
-- `FIREBASE_HOSTING_DOMAIN`: Hosting domain (default: dan-ai-qr.web.app)
+- `FIREBASE_HOSTING_DOMAIN`: Hosting domain (default: qr-review-generator.onrender.com)
 - `PORT`: Server port (default: 8080)
 
 ### Firebase Config

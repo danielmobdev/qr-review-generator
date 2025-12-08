@@ -120,7 +120,7 @@ def add_business():
             'created_at': firestore.SERVER_TIMESTAMP
         }
         db.collection('businesses').document(slug).set(business)
-        hosting_domain = os.getenv('FIREBASE_HOSTING_DOMAIN', 'dan-ai-qr.web.app')
+        hosting_domain = os.getenv('FIREBASE_HOSTING_DOMAIN', 'qr-review-generator.onrender.com')
         url = f"https://{hosting_domain}/r/{slug}"
         qr_url = generate_qr(slug, url)
         print("Business added", slug)
