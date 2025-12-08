@@ -10,22 +10,27 @@ import re
 
 app = Flask(__name__)
 
-# Firebase init
-raw = os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY")
-if not raw:
-    raise ValueError("Firebase not initialized. Check FIREBASE_SERVICE_ACCOUNT_KEY")
+# Firebase init (Safe for Render + Base64 + No Double Init)
+if not firebase_admin._apps:
+    raw = os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY") or os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY_BASE64")
 
-# Try to decode as Base64, fallback to plain JSON
-try:
-    decoded = base64.b64decode(raw).decode('utf-8')
-    cred_dict = json.loads(decoded)
-except:
-    cred_dict = json.loads(raw)
+    if not raw:
+        raise ValueError("Firebase not initialized. Check FIREBASE_SERVICE_ACCOUNT_KEY or BASE64")
 
-cred = credentials.Certificate(cred_dict)
-firebase_admin.initialize_app(cred)
+    # Try Base64 first, fallback to plain JSON
+    try:
+        decoded = base64.b64decode(raw).decode("utf-8")
+        cred_dict = json.loads(decoded)
+    except Exception:
+        cred_dict = json.loads(raw)
+
+    cred = credentials.Certificate(cred_dict)
+    firebase_admin.initialize_app(cred)
 
 db = firestore.client()
+
+# Ensure static directory exists for QR codes
+os.makedirs("static", exist_ok=True)
 
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 model = genai.GenerativeModel('gemini-2.0-flash-exp')
