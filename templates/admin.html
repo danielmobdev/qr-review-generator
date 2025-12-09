@@ -65,7 +65,7 @@
                         <button onclick="editBusiness('${business.slug}')">Edit</button>
                         <button onclick="recharge('${business.slug}')">Recharge</button>
                         <a href="/r/${business.slug}" target="_blank">View Page</a>
-                        <img src="/static/qr_${business.slug}.png" alt="QR" width="50">
+                        <img src="/qr/${business.slug}" alt="QR" width="50">
                         <button onclick="downloadQR('${business.slug}')">Download QR</button>
                         <button onclick="deleteBusiness('${business.slug}')" style="background-color: #dc3545; color: white;">Delete</button>
                     </td>

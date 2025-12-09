@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory
 import google.generativeai as genai
 import firebase_admin
 from firebase_admin import credentials, firestore
@@ -62,6 +62,23 @@ def review_page(slug):
 @app.route('/admin')
 def admin():
     return render_template('admin.html')
+
+@app.route('/qr/<slug>')
+def serve_qr(slug):
+    path = f'static/qr_{slug}.png'
+    if os.path.exists(path):
+        return send_from_directory('static', f'qr_{slug}.png')
+    else:
+        # Regenerate QR
+        doc = db.collection('businesses').document(slug).get()
+        if doc.exists:
+            business = doc.to_dict()
+            hosting_domain = os.getenv('FIREBASE_HOSTING_DOMAIN', 'qr-review-generator.onrender.com')
+            url = f"https://{hosting_domain}/r/{slug}"
+            generate_qr(slug, url)
+            return send_from_directory('static', f'qr_{slug}.png')
+        else:
+            return 'QR not found', 404
 
 @app.route('/generate-review/<slug>')
 def generate_review_route(slug):
