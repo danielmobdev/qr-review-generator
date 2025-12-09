@@ -124,7 +124,12 @@ def generate_review_route(slug):
         db.collection('review_logs').add({'business_slug': slug, 'timestamp': firestore.SERVER_TIMESTAMP, 'ai_used': True})
         # Generate prompt for authentic Google Business reviews
         category = business.get("category", "service")
-        services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
+        # Use custom services if provided, otherwise use category context
+        custom_services = business.get("services", "").strip()
+        if custom_services:
+            services = custom_services
+        else:
+            services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
 Write ONE realistic Google Business review for a real customer experience.
@@ -228,6 +233,7 @@ def add_business():
             'contact_person_name': data['contact_person_name'],
             'contact_number': data['contact_number'],
             'place_id': data['place_id'],
+            'services': data['services'],
             'credit_balance': data['credit_balance'],
             'price_per_credit': data['price_per_credit'],
             'active': data['active'],

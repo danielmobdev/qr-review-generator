@@ -26,6 +26,7 @@
             <input type="text" id="contact_person_name" placeholder="Contact Person Name" required>
             <input type="tel" id="contact_number" placeholder="Contact Number" required>
             <input type="text" id="place_id" placeholder="Google Place ID" required>
+            <input type="text" id="services" placeholder="Services (comma separated)" required>
             <input type="number" id="credit_balance" placeholder="Starting Credits" required>
             <input type="number" step="0.01" id="price_per_credit" placeholder="Price per Credit" required>
             <label><input type="checkbox" id="active" checked> Active</label>
@@ -89,6 +90,7 @@
                 contact_person_name: document.getElementById('contact_person_name').value,
                 contact_number: document.getElementById('contact_number').value,
                 place_id: document.getElementById('place_id').value,
+                services: document.getElementById('services').value,
                 credit_balance: parseInt(document.getElementById('credit_balance').value),
                 price_per_credit: parseFloat(document.getElementById('price_per_credit').value),
                 active: document.getElementById('active').checked
