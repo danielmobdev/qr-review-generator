@@ -106,22 +106,45 @@ def generate_review_route(slug):
         # Log
         db.collection('review_logs').add({'business_slug': slug, 'timestamp': firestore.SERVER_TIMESTAMP, 'ai_used': True})
         # Generate prompt for authentic Google Business reviews
-        prompt = f"""Write ONE realistic Google Business review for {business['name']}, a {business['category']} located in {business['city']}.
+        prompt = f"""
+Write ONE realistic Google Business review for {business['name']}, an {business['category']} located in {business['city']}.
 
-IMPORTANT: Generate ONLY ONE review, not multiple reviews or a list.
+IMPORTANT RULES:
+- Generate ONLY ONE review.
+- Length must be 2–3 sentences only.
+- Must feel like a REAL human customer wrote it.
+- Must NOT look like advertising copy.
+- Must sound natural, conversational, and personal.
 
-Requirements:
-- Exactly 2-3 sentences
-- Sound like a real customer review (conversational, personal)
-- Include the business name, city, and category naturally
-- Always include a strong recommendation to others
-- Use positive language and enthusiasm
-- Make it sound authentic and human-written
-- Focus on quality, service, or experience
+SEO + SEARCH BEHAVIOR REQUIREMENTS (VERY IMPORTANT):
+- Naturally include:
+  • Business name: {business['name']}
+  • City: {business['city']}
+  • Service category: {business['category']}
+- The wording should support how people actually search on Google, such as:
+  • "digital marketing agency in {business['city']}"
+  • "best {business['category']} near me"
+  • "SEO and online promotion in {business['city']}"
+- Include at least ONE benefit such as:
+  • more customer calls
+  • better Google visibility
+  • more leads
+  • improved online presence
 
-Example: "Great experience at {business['name']} in {business['city']}! Their {business['category']} services are top-notch. Highly recommend!"
+MANDATORY CONTENT:
+- Mention a real-type service outcome (SEO, ads, social media, Google ranking, leads, etc.)
+- End with a strong recommendation like:
+  "Highly recommended", "One of the best in {business['city']}", or
+  "Must try for any business in {business['city']}".
 
-Output only the review text, nothing else."""
+STYLE:
+- Human tone
+- Not robotic
+- Not repeated structure
+- Not keyword-stuffed
+
+Output ONLY the review text. Do NOT include quotes, bullet points, headings, or any explanation.
+"""
         try:
             response = model.generate_content(prompt)
             review = response.text.strip()
