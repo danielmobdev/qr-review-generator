@@ -28,6 +28,19 @@
             if (match) slug = match[1];
         }
 
+        async function loadBusinessDetails() {
+            try {
+                const response = await fetch(`${backendUrl}/api/businesses/${slug}`);
+                if (response.ok) {
+                    const business = await response.json();
+                    document.getElementById('business-title').textContent = business.name;
+                    document.title = `${business.name} - Review Generator`;
+                }
+            } catch (e) {
+                console.error('Error loading business details:', e);
+            }
+        }
+
         async function loadReview() {
             document.getElementById('review').textContent = 'Loading...';
             try {
@@ -52,7 +65,10 @@
             console.log('New review button clicked');
             loadReview();
         });
-        window.onload = loadReview;
+        window.onload = () => {
+            loadBusinessDetails();
+            loadReview();
+        };
     </script>
 </body>
 </html>

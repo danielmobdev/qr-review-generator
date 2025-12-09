@@ -118,6 +118,19 @@ def get_businesses():
         data.append(d)
     return jsonify(data)
 
+@app.route('/api/businesses/<slug>', methods=['GET'])
+def get_business(slug):
+    try:
+        doc = db.collection('businesses').document(slug).get()
+        if doc.exists:
+            business = doc.to_dict()
+            business['slug'] = doc.id
+            return jsonify(business)
+        else:
+            return jsonify({'error': 'Business not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/businesses', methods=['POST'])
 def add_business():
     try:
