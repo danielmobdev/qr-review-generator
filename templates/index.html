@@ -59,15 +59,9 @@
             color: #FFFFFF;
         }
 
-        .review-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 40px;
+        .review-content {
             max-width: 600px;
             width: 100%;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             text-align: center;
         }
 
@@ -75,65 +69,12 @@
             font-size: 18px;
             line-height: 1.6;
             color: #FFFFFF;
-            margin-bottom: 30px;
             font-weight: 400;
-            display: none;
+            margin: 0;
         }
 
         .loading-text {
             color: #A0A4B8;
-            font-style: italic;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin-bottom: 24px;
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #FF8C32 0%, #FFA94D 100%);
-            color: #0B0F19;
-            box-shadow: 0 4px 15px rgba(255, 140, 50, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 140, 50, 0.4);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: #FFFFFF;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            display: none;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-1px);
-        }
-
-        .compliance-note {
-            font-size: 12px;
-            color: #A0A4B8;
-            text-align: center;
-            margin-top: 20px;
             font-style: italic;
         }
 
@@ -144,20 +85,6 @@
 
             .business-name {
                 font-size: 20px;
-            }
-
-            .review-card {
-                padding: 30px 20px;
-            }
-
-            .button-group {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn {
-                width: 100%;
-                max-width: 280px;
             }
         }
     </style>
@@ -172,22 +99,9 @@
 
     <div class="business-name" id="business-title">{{ business_name }}</div>
 
-    <div class="review-card">
+    <div class="review-content">
         <div class="review-text" id="review">
-            <span class="loading-text">Generating your personalized review...</span>
-        </div>
-
-        <div class="button-group">
-            <button class="btn btn-primary" id="copy-btn" style="display: none;">
-                Copy & Continue to Google
-            </button>
-            <button class="btn btn-secondary" id="new-review-btn">
-                Generate Another Review
-            </button>
-        </div>
-
-        <div class="compliance-note">
-            This is a suggested review. You may edit it before posting.
+            Generating your personalized review...
         </div>
     </div>
 
@@ -215,13 +129,9 @@
 
         async function loadReview() {
             const reviewElement = document.getElementById('review');
-            const copyBtn = document.getElementById('copy-btn');
-            const newReviewBtn = document.getElementById('new-review-btn');
 
             reviewElement.innerHTML = '<span class="loading-text">Generating your personalized review...</span>';
             reviewElement.style.display = 'block';
-            copyBtn.style.display = 'none';
-            newReviewBtn.style.display = 'none';
 
             try {
                 const url = `${backendUrl}/generate-review/${slug}`;
@@ -231,8 +141,6 @@
 
                 if (data.review && data.review !== 'Loading...') {
                     reviewElement.innerHTML = data.review;
-                    copyBtn.style.display = 'inline-block';
-                    newReviewBtn.style.display = 'inline-block';
 
                     // Auto copy to clipboard
                     await navigator.clipboard.writeText(data.review);
@@ -251,21 +159,6 @@
                 reviewElement.innerHTML = '<span style="color: #FF8C32;">Error loading review. Please try again.</span>';
             }
         }
-
-        document.getElementById('copy-btn').addEventListener('click', async () => {
-            const reviewText = document.getElementById('review').textContent;
-            await navigator.clipboard.writeText(reviewText);
-            const btn = document.getElementById('copy-btn');
-            btn.textContent = 'Copied!';
-            setTimeout(() => {
-                btn.textContent = 'Copy & Continue to Google';
-            }, 2000);
-        });
-
-        document.getElementById('new-review-btn').addEventListener('click', () => {
-            console.log('New review button clicked');
-            loadReview();
-        });
 
         window.onload = () => {
             loadBusinessDetails();
