@@ -66,6 +66,7 @@
                         <button onclick="recharge('${business.slug}')">Recharge</button>
                         <a href="/r/${business.slug}" target="_blank">View Page</a>
                         <img src="/static/qr_${business.slug}.png" alt="QR" width="50">
+                        <button onclick="downloadQR('${business.slug}')">Download QR</button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -120,6 +121,13 @@
                 });
                 loadBusinesses();
             }
+        }
+
+        function downloadQR(slug) {
+            const link = document.createElement('a');
+            link.href = `/static/qr_${slug}.png`;
+            link.download = `qr_${slug}.png`;
+            link.click();
         }
 
         window.onload = loadBusinesses;
