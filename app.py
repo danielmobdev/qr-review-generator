@@ -131,6 +131,8 @@ def add_business():
             'category': data['category'],
             'city': data['city'],
             'google_link': data['google_link'],
+            'contact_person_name': data['contact_person_name'],
+            'contact_number': data['contact_number'],
             'credit_balance': data['credit_balance'],
             'price_per_credit': data['price_per_credit'],
             'active': data['active'],

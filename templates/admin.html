@@ -24,6 +24,8 @@
             <input type="text" id="category" placeholder="Category" required>
             <input type="text" id="city" placeholder="City" required>
             <input type="url" id="google_link" placeholder="Google Link" required>
+            <input type="text" id="contact_person_name" placeholder="Contact Person Name" required>
+            <input type="tel" id="contact_number" placeholder="Contact Number" required>
             <input type="number" id="credit_balance" placeholder="Starting Credits" required>
             <input type="number" step="0.01" id="price_per_credit" placeholder="Price per Credit" required>
             <label><input type="checkbox" id="active" checked> Active</label>
@@ -37,6 +39,8 @@
                     <th>Name</th>
                     <th>Category</th>
                     <th>City</th>
+                    <th>Contact Person</th>
+                    <th>Contact Number</th>
                     <th>Credits</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -59,6 +63,8 @@
                     <td>${business.name}</td>
                     <td>${business.category}</td>
                     <td>${business.city}</td>
+                    <td>${business.contact_person_name || 'N/A'}</td>
+                    <td>${business.contact_number || 'N/A'}</td>
                     <td>${business.credit_balance}</td>
                     <td>${business.active ? 'Active' : 'Inactive'}</td>
                     <td>
@@ -81,6 +87,8 @@
                 category: document.getElementById('category').value,
                 city: document.getElementById('city').value,
                 google_link: document.getElementById('google_link').value,
+                contact_person_name: document.getElementById('contact_person_name').value,
+                contact_number: document.getElementById('contact_number').value,
                 credit_balance: parseInt(document.getElementById('credit_balance').value),
                 price_per_credit: parseFloat(document.getElementById('price_per_credit').value),
                 active: document.getElementById('active').checked
