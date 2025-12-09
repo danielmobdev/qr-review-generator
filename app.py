@@ -132,7 +132,6 @@ def add_business():
             'name': name,
             'category': data['category'],
             'city': data['city'],
-            'google_link': data['google_link'],
             'contact_person_name': data['contact_person_name'],
             'contact_number': data['contact_number'],
             'place_id': data['place_id'],
