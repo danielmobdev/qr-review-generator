@@ -96,8 +96,24 @@ def generate_review_route(slug):
         db.collection('businesses').document(slug).update({'credit_balance': firestore.Increment(-1)})
         # Log
         db.collection('review_logs').add({'business_slug': slug, 'timestamp': firestore.SERVER_TIMESTAMP, 'ai_used': True})
-        # Generate prompt
-        prompt = f"Generate a unique 2-3 sentence patient review for {business['name']}, a {business['category']} in {business['city']}. Use simple, layman English that Indians can easily understand. Make it SEO-friendly, human-sounding, positive, and do not mention any diseases, diagnoses, or medical conditions. Include the business name, city, and category naturally."
+        # Generate prompt for authentic Google Business reviews
+        prompt = f"""Write a realistic Google Business review for {business['name']}, a {business['category']} located in {business['city']}.
+
+Requirements:
+- 2-3 sentences only
+- Sound like a real customer review (conversational, personal)
+- Include the business name, city, and category naturally in different positions
+- Always include a strong recommendation to others
+- Use varied sentence structures and positive language
+- Make it sound authentic and human-written
+- Focus on quality, service, or experience
+- End with enthusiasm or recommendation
+
+Examples of good reviews:
+"Great experience at {business['name']} in {business['city']}! Their {business['category']} services are top-notch. Highly recommend!"
+"{business['name']} provides excellent {business['category']} services in {business['city']}. Very satisfied with the quality. Would definitely recommend to others!"
+
+Make each review unique and natural-sounding."""
         try:
             response = model.generate_content(prompt)
             review = response.text.strip()
