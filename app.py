@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, send_from_directory
+from flask import Flask, render_template, jsonify, request, send_from_directory, session, redirect, url_for
 import google.generativeai as genai
 import firebase_admin
 from firebase_admin import credentials, firestore
@@ -7,8 +7,11 @@ import json
 import base64
 import qrcode
 import re
+from datetime import timedelta
 
 app = Flask(__name__)
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
+app.permanent_session_lifetime = timedelta(hours=1)
 
 # TEMP diagnostic
 print("ENV FIREBASE_SERVICE_ACCOUNT_KEY:", bool(os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY")))
@@ -87,7 +90,38 @@ def review_page(slug):
 
 @app.route('/admin')
 def admin():
-    return render_template('admin.html')
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('admin_panel.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        try:
+            # Fetch user from Firebase users collection
+            user_doc = db.collection('users').document(username).get()
+            if user_doc.exists:
+                user_data = user_doc.to_dict()
+                if user_data.get('password') == password:
+                    session.permanent = True
+                    session['user'] = username
+                    return redirect(url_for('admin'))
+                else:
+                    return render_template('login.html', error='Invalid credentials')
+            else:
+                return render_template('login.html', error='User not found')
+        except Exception as e:
+            return render_template('login.html', error='Login failed')
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('login'))
 
 @app.route('/qr/<slug>')
 def serve_qr(slug):
