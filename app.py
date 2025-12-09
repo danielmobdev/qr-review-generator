@@ -39,6 +39,23 @@ os.makedirs("static", exist_ok=True)
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 model = genai.GenerativeModel('gemini-2.0-flash-exp')
 
+CATEGORY_CONTEXT = {
+    "ai digital marketing": "SEO, Google Business optimization, online ads, lead generation, social media promotion",
+    "digital marketing": "SEO, Google ads, social media marketing, lead generation",
+    "doctor": "consultation, diagnosis, treatment, patient care, clinic hygiene",
+    "clinic": "medical consultation, treatment, clean environment, polite staff",
+    "hospital": "medical treatment, emergency care, nursing, hygiene",
+    "photography": "wedding photography, videography, photo quality, timely delivery",
+    "studio": "photoshoot, video shoot, editing, professional output",
+    "restaurant": "food taste, service, ambience, hygiene",
+    "hotel": "stay comfort, cleanliness, staff service, location",
+    "salon": "haircut, styling, hygiene, staff behavior",
+    "gym": "training, equipment, cleanliness, trainer support",
+    "real estate": "property dealing, site visits, legal process, support",
+    "education": "teaching quality, guidance, results, student support",
+    "default": "service quality, professional staff, customer satisfaction"
+}
+
 def slugify(name):
     return re.sub(r'[^a-z0-9-]', '', name.lower().replace(' ', '-').replace('&', 'and'))
 
@@ -106,44 +123,45 @@ def generate_review_route(slug):
         # Log
         db.collection('review_logs').add({'business_slug': slug, 'timestamp': firestore.SERVER_TIMESTAMP, 'ai_used': True})
         # Generate prompt for authentic Google Business reviews
+        category = business.get("category", "service")
+        services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
+
         prompt = f"""
-Write ONE realistic Google Business review for {business['name']}, an {business['category']} located in {business['city']}.
+Write ONE realistic Google Business review for {business['name']}, a {category} business located in {business['city']}.
 
 IMPORTANT RULES:
 - Generate ONLY ONE review.
 - Length must be 2–3 sentences only.
-- Must feel like a REAL human customer wrote it.
-- Must NOT look like advertising copy.
-- Must sound natural, conversational, and personal.
+- Must sound like a REAL human customer.
+- Must NOT sound like an advertisement.
+- Must be conversational and natural.
 
-SEO + SEARCH BEHAVIOR REQUIREMENTS (VERY IMPORTANT):
-- Naturally include:
-  • Business name: {business['name']}
-  • City: {business['city']}
-  • Service category: {business['category']}
-- The wording should support how people actually search on Google, such as:
-  • "digital marketing agency in {business['city']}"
-  • "best {business['category']} near me"
-  • "SEO and online promotion in {business['city']}"
-- Include at least ONE benefit such as:
-  • more customer calls
-  • better Google visibility
-  • more leads
-  • improved online presence
+CATEGORY UNDERSTANDING:
+This business is a "{category}".
+Typical services include: {services}.
+The review MUST reflect these services naturally.
 
-MANDATORY CONTENT:
-- Mention a real-type service outcome (SEO, ads, social media, Google ranking, leads, etc.)
-- End with a strong recommendation like:
-  "Highly recommended", "One of the best in {business['city']}", or
-  "Must try for any business in {business['city']}".
+GOOGLE SEARCH BEHAVIOR OPTIMIZATION:
+Write in a way that helps ranking for searches like:
+- "{category} in {business['city']}"
+- "best {category} near me"
+- "top {category} in {business['city']}"
+
+MANDATORY:
+- Must naturally include:
+  • {business['name']}
+  • {business['city']}
+  • {category}
+- Must mention ONE real service experience or result.
+- Must end with a STRONG recommendation.
 
 STYLE:
 - Human tone
 - Not robotic
 - Not repeated structure
-- Not keyword-stuffed
+- No keyword stuffing
 
-Output ONLY the review text. Do NOT include quotes, bullet points, headings, or any explanation.
+Output ONLY the review text. No quotes. No explanation.
 """
         try:
             response = model.generate_content(prompt)
