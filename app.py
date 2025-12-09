@@ -100,21 +100,33 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
+        print(f"Login attempt: username={username}, password={password}")
+
         try:
             # Fetch user from Firebase users collection
             user_doc = db.collection('users').document(username).get()
+            print(f"User doc exists: {user_doc.exists}")
+
             if user_doc.exists:
                 user_data = user_doc.to_dict()
-                if user_data.get('password') == password:
+                print(f"User data: {user_data}")
+                stored_password = user_data.get('password')
+                print(f"Stored password: {stored_password}, Input password: {password}")
+
+                if stored_password == password:
                     session.permanent = True
                     session['user'] = username
+                    print(f"Login successful for user: {username}")
                     return redirect(url_for('admin'))
                 else:
+                    print("Password mismatch")
                     return render_template('login.html', error='Invalid credentials')
             else:
+                print(f"User {username} not found")
                 return render_template('login.html', error='User not found')
         except Exception as e:
-            return render_template('login.html', error='Login failed')
+            print(f"Login error: {str(e)}")
+            return render_template('login.html', error=f'Login failed: {str(e)}')
 
     return render_template('login.html')
 
