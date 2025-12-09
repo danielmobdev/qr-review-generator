@@ -67,6 +67,7 @@
                         <a href="/r/${business.slug}" target="_blank">View Page</a>
                         <img src="/static/qr_${business.slug}.png" alt="QR" width="50">
                         <button onclick="downloadQR('${business.slug}')">Download QR</button>
+                        <button onclick="deleteBusiness('${business.slug}')" style="background-color: #dc3545; color: white;">Delete</button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -128,6 +129,21 @@
             link.href = `/static/qr_${slug}.png`;
             link.download = `qr_${slug}.png`;
             link.click();
+        }
+
+        async function deleteBusiness(slug) {
+            if (confirm(`Are you sure you want to delete the business "${slug}"? This action cannot be undone.`)) {
+                const response = await fetch(`${backendUrl}/api/businesses/${slug}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Business deleted successfully');
+                    loadBusinesses();
+                } else {
+                    alert(result.error);
+                }
+            }
         }
 
         window.onload = loadBusinesses;
