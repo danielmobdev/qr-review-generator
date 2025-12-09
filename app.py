@@ -127,39 +127,54 @@ def generate_review_route(slug):
         services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-Write ONE realistic Google Business review for {business['name']}, a {category} business located in {business['city']}.
+Write ONE realistic Google Business review for a real customer experience.
 
-IMPORTANT RULES:
+Business Details:
+- Name: {business['name']}
+- Category: {category}
+- City: {business['city']}
+- Services: {services}
+
+CRITICAL RULES:
 - Generate ONLY ONE review.
-- Length must be 2–3 sentences only.
-- Must sound like a REAL human customer.
+- Length must be exactly 2–3 natural sentences.
+- Must sound 100% human and personal.
 - Must NOT sound like an advertisement.
-- Must be conversational and natural.
+- Must NOT follow a fixed structure.
+- Must NOT look patterned or repeated.
+
+RANDOM PLACEMENT RULE (VERY IMPORTANT):
+- The business name, city, and category MUST appear naturally,
+  but their position must be RANDOM:
+  • Sometimes at the beginning,
+  • Sometimes in the middle,
+  • Sometimes at the end.
+- Never always start with the business name.
 
 CATEGORY UNDERSTANDING:
-This business is a "{category}".
-Typical services include: {services}.
-The review MUST reflect these services naturally.
+- The review must clearly reflect real services from this category: {services}
+- Mention ONE real experience or outcome naturally.
 
-GOOGLE SEARCH BEHAVIOR OPTIMIZATION:
-Write in a way that helps ranking for searches like:
-- "{category} in {business['city']}"
-- "best {category} near me"
-- "top {category} in {business['city']}"
+SEARCH BEHAVIOR OPTIMIZATION:
+- The wording should naturally support how people search on Google like:
+  • "{category} in {business['city']}"
+  • "best {category} near me"
+  • "top {category} in {business['city']}"
 
 MANDATORY:
-- Must naturally include:
+- Must include ALL THREE somewhere:
   • {business['name']}
   • {business['city']}
   • {category}
-- Must mention ONE real service experience or result.
-- Must end with a STRONG recommendation.
+- Mention ONE real benefit (leads, visibility, service quality, hygiene, results, etc.)
+- End with a natural strong recommendation (not forced).
 
 STYLE:
-- Human tone
-- Not robotic
-- Not repeated structure
+- Truly human
+- Warm and meaningful
 - No keyword stuffing
+- No robotic tone
+- No repeated phrasing patterns
 
 Output ONLY the review text. No quotes. No explanation.
 """
