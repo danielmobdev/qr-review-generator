@@ -90,7 +90,8 @@ def generate_review_route(slug):
         if not business.get('active', False):
             return jsonify({'error': 'Business inactive'}), 403
         if business['credit_balance'] <= 0:
-            return jsonify({'review': 'Credits finished. Please contact DAN AI to recharge.', 'google_link': business['google_link']}), 200
+            place_id_url = f"https://search.google.com/local/writereview?placeid={business.get('place_id', '')}"
+            return jsonify({'review': 'Credits finished. Please contact DAN AI to recharge.', 'google_link': place_id_url}), 200
         # Deduct credit
         db.collection('businesses').document(slug).update({'credit_balance': firestore.Increment(-1)})
         # Log
@@ -102,7 +103,8 @@ def generate_review_route(slug):
             review = response.text.strip()
         except Exception as e:
             review = f"{business['name']} is an excellent {business['category']} in {business['city']}. Their services are highly recommended."
-        return jsonify({'review': review, 'google_link': business['google_link']})
+        place_id_url = f"https://search.google.com/local/writereview?placeid={business.get('place_id', '')}"
+        return jsonify({'review': review, 'google_link': place_id_url})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -133,6 +135,7 @@ def add_business():
             'google_link': data['google_link'],
             'contact_person_name': data['contact_person_name'],
             'contact_number': data['contact_number'],
+            'place_id': data['place_id'],
             'credit_balance': data['credit_balance'],
             'price_per_credit': data['price_per_credit'],
             'active': data['active'],
