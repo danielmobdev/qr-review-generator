@@ -59,23 +59,11 @@
             color: #FFFFFF;
         }
 
-        .review-content {
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .review-text {
-            font-size: 18px;
-            line-height: 1.6;
-            color: #FFFFFF;
-            font-weight: 400;
-            margin: 0;
-        }
-
-        .loading-text {
+        .status-message {
             color: #A0A4B8;
-            font-style: italic;
+            font-size: 16px;
+            text-align: center;
+            margin-top: 20px;
         }
 
         @media (max-width: 768px) {
@@ -99,10 +87,8 @@
 
     <div class="business-name" id="business-title">{{ business_name }}</div>
 
-    <div class="review-content">
-        <div class="review-text" id="review">
-            Generating your personalized review...
-        </div>
+    <div class="status-message">
+        Redirecting to Google Reviews...
     </div>
 
     <script>
@@ -128,11 +114,6 @@
         }
 
         async function loadReview() {
-            const reviewElement = document.getElementById('review');
-
-            reviewElement.innerHTML = '<span class="loading-text">Generating your personalized review...</span>';
-            reviewElement.style.display = 'block';
-
             try {
                 const url = `${backendUrl}/generate-review/${slug}`;
                 const response = await fetch(url);
@@ -140,23 +121,20 @@
                 console.log('Loaded review:', data);
 
                 if (data.review && data.review !== 'Loading...') {
-                    reviewElement.innerHTML = data.review;
-
-                    // Auto copy to clipboard
+                    // Auto copy to clipboard (without displaying)
                     await navigator.clipboard.writeText(data.review);
 
-                    // Auto redirect after a short delay
-                    setTimeout(() => {
-                        if (data.google_link) {
-                            window.location.href = data.google_link;
-                        }
-                    }, 2000);
+                    // Auto redirect immediately
+                    if (data.google_link) {
+                        window.location.href = data.google_link;
+                    }
                 } else {
-                    reviewElement.innerHTML = '<span style="color: #FF8C32;">' + (data.review || 'Error loading review.') + '</span>';
+                    // If error, show error message
+                    document.querySelector('.status-message').innerHTML = '<span style="color: #FF8C32;">Error loading review. Please try again.</span>';
                 }
             } catch (e) {
                 console.error('Error loading review:', e);
-                reviewElement.innerHTML = '<span style="color: #FF8C32;">Error loading review. Please try again.</span>';
+                document.querySelector('.status-message').innerHTML = '<span style="color: #FF8C32;">Error loading review. Please try again.</span>';
             }
         }
 
