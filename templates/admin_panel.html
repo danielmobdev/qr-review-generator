@@ -539,7 +539,7 @@
     </div>
 
     <script>
-        const backendUrl = '';
+        const backendUrl = window.location.origin;
         async function loadBusinesses() {
             const response = await fetch(`${backendUrl}/api/businesses`);
             const businesses = await response.json();

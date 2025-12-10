@@ -86,6 +86,10 @@ qr-review-generator/
    export GEMINI_API_KEY=your_gemini_key
    export FIREBASE_HOSTING_DOMAIN=qr-review-generator.onrender.com
    ```
+   **Note**: For production deployment on `app.danai.in`, set:
+   ```bash
+   export FIREBASE_HOSTING_DOMAIN=app.danai.in
+   ```
 
 5. **Run Locally**
    ```bash
@@ -119,7 +123,7 @@ qr-review-generator/
 2. **Environment Variables**
    - GEMINI_API_KEY
    - FIREBASE_SERVICE_ACCOUNT_KEY (full JSON)
-   - FIREBASE_HOSTING_DOMAIN
+   - FIREBASE_HOSTING_DOMAIN (set to `app.danai.in` for production)
 
 3. **Deploy**
    - Manual deploy latest commit

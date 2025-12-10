@@ -92,7 +92,7 @@
     </div>
 
     <script>
-        const backendUrl = '';
+        const backendUrl = window.location.origin;
         var slug = "{{ slug or '' }}";
         if (!slug) {
             const path = window.location.pathname;
