@@ -62,6 +62,24 @@ CATEGORY_CONTEXT = {
 def slugify(name):
     return re.sub(r'[^a-z0-9-]', '', name.lower().replace(' ', '-').replace('&', 'and'))
 
+def is_valid_place_id(place_id):
+    if not place_id or not isinstance(place_id, str):
+        return False
+    # Google Place IDs are typically alphanumeric strings, often starting with "ChI"
+    # They should not contain template literals or special characters
+    if '{' in place_id or '}' in place_id or place_id.strip() == '':
+        return False
+    # Basic validation: should be alphanumeric with some allowed characters
+    return bool(re.match(r'^[A-Za-z0-9_-]+$', place_id.strip()))
+
+def get_google_review_url(place_id, business_name, city):
+    if is_valid_place_id(place_id):
+        return f"https://search.google.com/local/writereview?placeid={place_id}"
+    else:
+        # Fallback to Google search for the business
+        query = f"{business_name} {city} reviews".replace(' ', '+')
+        return f"https://www.google.com/search?q={query}"
+
 def generate_qr(slug, url):
     qr = qrcode.QRCode(version=1, box_size=10, border=5)
     qr.add_data(url)
@@ -162,7 +180,7 @@ def generate_review_route(slug):
         if not business.get('active', False):
             return jsonify({'error': 'Business inactive'}), 403
         if business['credit_balance'] <= 0:
-            place_id_url = f"https://search.google.com/local/writereview?placeid={business.get('place_id', '')}"
+            place_id_url = get_google_review_url(business.get('place_id', ''), business.get('name', ''), business.get('city', ''))
             return jsonify({'review': 'Credits finished. Please contact DAN AI to recharge.', 'google_link': place_id_url}), 200
         # Deduct credit
         db.collection('businesses').document(slug).update({'credit_balance': firestore.Increment(-1)})
@@ -234,7 +252,7 @@ Output ONLY the review text. No quotes. No explanation.
             review = response.text.strip()
         except Exception as e:
             review = f"{business['name']} is an excellent {business['category']} in {business['city']}. Their services are highly recommended."
-        place_id_url = f"https://search.google.com/local/writereview?placeid={business.get('place_id', '')}"
+        place_id_url = get_google_review_url(business.get('place_id', ''), business.get('name', ''), business.get('city', ''))
         return jsonify({'review': review, 'google_link': place_id_url})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -272,13 +290,18 @@ def add_business():
         print("Slug", slug)
         if db.collection('businesses').document(slug).get().exists:
             return jsonify({'error': 'Business already exists'}), 400
+        
+        place_id = data.get('place_id', '')
+        if place_id and not is_valid_place_id(place_id):
+            return jsonify({'error': 'Invalid Google Place ID format'}), 400
+        
         business = {
             'name': name,
             'category': data['category'],
             'city': data['city'],
             'contact_person_name': data['contact_person_name'],
             'contact_number': data['contact_number'],
-            'place_id': data['place_id'],
+            'place_id': place_id,
             'services': data['services'],
             'credit_balance': data['credit_balance'],
             'price_per_credit': data['price_per_credit'],
@@ -298,6 +321,10 @@ def add_business():
 @app.route('/api/businesses/<slug>', methods=['PUT'])
 def update_business(slug):
     data = request.json
+    if 'place_id' in data:
+        place_id = data.get('place_id', '')
+        if place_id and not is_valid_place_id(place_id):
+            return jsonify({'error': 'Invalid Google Place ID format'}), 400
     db.collection('businesses').document(slug).update(data)
     return jsonify({'success': True})
 
