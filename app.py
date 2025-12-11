@@ -203,45 +203,44 @@ Business Details:
 CRITICAL RULES:
 - Generate ONLY ONE review.
 - Length must be exactly 2–3 natural sentences.
-- Must sound 100% human and personal.
+- Must sound 100 percent human and personal.
 - Must NOT sound like an advertisement.
 - Must NOT follow a fixed structure.
 - Must NOT look patterned or repeated.
 
-RANDOM PLACEMENT RULE (VERY IMPORTANT):
-- The business name, city, and category MUST appear naturally,
-  but their position must be RANDOM:
-  • Sometimes at the beginning,
-  • Sometimes in the middle,
-  • Sometimes at the end.
-- Never always start with the business name.
+PUNCTUATION RULES (EXTREMELY IMPORTANT):
+- Do NOT use any special characters.
+- Allowed characters: a–z A–Z 0–9 . ,
+- NOT allowed: ; : - — _ ( ) [ ] {{ }} ! ? * / \ " ' …
+- Do NOT use emojis or symbols.
+- Keep punctuation simple meaningful and human.
+
+RANDOM PLACEMENT RULE:
+- The business name city and category MUST appear naturally
+  but in random positions.
 
 CATEGORY UNDERSTANDING:
-- The review must clearly reflect real services from this category: {services}
-- Mention ONE real experience or outcome naturally.
+- The review must reflect the real services from this category.
 
 SEARCH BEHAVIOR OPTIMIZATION:
-- The wording should naturally support how people search on Google like:
-  • "{category} in {business['city']}"
-  • "best {category} near me"
-  • "top {category} in {business['city']}"
+- Wording should naturally support phrases like
+  "{category} in {business['city']}"
+  "best {category} near me"
+  "top {category} in {business['city']}"
 
 MANDATORY:
-- Must include ALL THREE somewhere:
-  • {business['name']}
-  • {business['city']}
-  • {category}
-- Mention ONE real benefit (leads, visibility, service quality, hygiene, results, etc.)
-- End with a natural strong recommendation (not forced).
+- Must include all three somewhere:
+  {business['name']}, {business['city']}, {category}
+- Mention one real benefit like service quality hygiene results or support.
+- End with a natural recommendation.
 
 STYLE:
-- Truly human
-- Warm and meaningful
+- Human warm natural
 - No keyword stuffing
 - No robotic tone
-- No repeated phrasing patterns
+- No repeated patterns
 
-Output ONLY the review text. No quotes. No explanation.
+Output ONLY the review text. Do not include quotes.
 """
         try:
             response = model.generate_content(prompt)
