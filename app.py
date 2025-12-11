@@ -16,15 +16,9 @@ RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 RAZORPAY_WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET")
 
-razor_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
-
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
 app.permanent_session_lifetime = timedelta(hours=1)
-
-# TEMP diagnostic
-print("ENV FIREBASE_SERVICE_ACCOUNT_KEY:", bool(os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY")))
-print("ENV FIREBASE_SERVICE_ACCOUNT_KEY_BASE64:", bool(os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY_BASE64")))
 
 # Firebase init (Safe for Render + Base64 + No Double Init)
 if not firebase_admin._apps:
@@ -115,10 +109,7 @@ def review_page(slug):
     db.collection("businesses").document(slug).update({
         "credit_balance": firestore.Increment(-1)
     })
-    url = get_google_review_url(
-        business.get('place_id', ''), business.get('name', ''), business.get('city', '')
-    )
-    return redirect(url)
+    return render_template('index.html', slug=slug)
 
 @app.route("/recharge/<slug>")
 def recharge_page(slug):
@@ -140,32 +131,20 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        print(f"Login attempt: username={username}, password={password}")
-
         try:
-            # Fetch user from Firebase users collection
             user_doc = db.collection('users').document(username).get()
-            print(f"User doc exists: {user_doc.exists}")
-
             if user_doc.exists:
                 user_data = user_doc.to_dict()
-                print(f"User data: {user_data}")
                 stored_password = user_data.get('password')
-                print(f"Stored password: {stored_password}, Input password: {password}")
-
                 if stored_password == password:
                     session.permanent = True
                     session['user'] = username
-                    print(f"Login successful for user: {username}")
                     return redirect(url_for('admin'))
                 else:
-                    print("Password mismatch")
                     return render_template('login.html', error='Invalid credentials')
             else:
-                print(f"User {username} not found")
                 return render_template('login.html', error='User not found')
         except Exception as e:
-            print(f"Login error: {str(e)}")
             return render_template('login.html', error=f'Login failed: {str(e)}')
 
     return render_template('login.html')
@@ -181,7 +160,6 @@ def serve_qr(slug):
     if os.path.exists(path):
         return send_from_directory('static', f'qr_{slug}.png')
     else:
-        # Regenerate QR
         doc = db.collection('businesses').document(slug).get()
         if doc.exists:
             business = doc.to_dict()
@@ -204,13 +182,9 @@ def generate_review_route(slug):
         if business['credit_balance'] <= 0:
             place_id_url = get_google_review_url(business.get('place_id', ''), business.get('name', ''), business.get('city', ''))
             return jsonify({'review': 'Credits finished. Please contact DAN AI to recharge.', 'google_link': place_id_url}), 200
-        # Deduct credit
         db.collection('businesses').document(slug).update({'credit_balance': firestore.Increment(-1)})
-        # Log
         db.collection('review_logs').add({'business_slug': slug, 'timestamp': firestore.SERVER_TIMESTAMP, 'ai_used': True})
-        # Generate prompt for authentic Google Business reviews
         category = business.get("category", "service")
-        # Use custom services if provided, otherwise use category context
         custom_services = business.get("services", "").strip()
         if custom_services:
             services = custom_services
@@ -306,10 +280,8 @@ def get_business(slug):
 def add_business():
     try:
         data = request.json
-        print("Adding business", data)
         name = data['name']
         slug = slugify(name)
-        print("Slug", slug)
         if db.collection('businesses').document(slug).get().exists:
             return jsonify({'error': 'Business already exists'}), 400
         
@@ -334,10 +306,8 @@ def add_business():
         hosting_domain = os.getenv('FIREBASE_HOSTING_DOMAIN', 'qr-review-generator.onrender.com')
         url = f"https://{hosting_domain}/r/{slug}"
         qr_url = generate_qr(slug, url)
-        print("Business added", slug)
         return jsonify({'slug': slug, 'qr_url': qr_url, 'url': url})
     except Exception as e:
-        print("Error adding business", e)
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/businesses/<slug>', methods=['PUT'])
@@ -378,7 +348,6 @@ def get_business_payments(slug):
 def delete_business(slug):
     try:
         db.collection('businesses').document(slug).delete()
-        # Optionally delete QR file
         qr_path = f'static/qr_{slug}.png'
         if os.path.exists(qr_path):
             os.remove(qr_path)
@@ -412,7 +381,6 @@ def verify_payment():
     slug = data.get("slug")
     credits = int(data.get("credits", 0))
 
-    # Verify payment signature
     params_dict = {
         'razorpay_order_id': order_id,
         'razorpay_payment_id': payment_id,
@@ -424,15 +392,12 @@ def verify_payment():
     except:
         return jsonify({"error": "Payment verification failed"}), 400
 
-    # Get business details
     business = db.collection("businesses").document(slug).get().to_dict()
 
-    # Update credit balance
     db.collection("businesses").document(slug).update({
         "credit_balance": firestore.Increment(credits)
     })
 
-    # Create payment record
     payment_record = {
         "slug": slug,
         "business_name": business.get("name", ""),

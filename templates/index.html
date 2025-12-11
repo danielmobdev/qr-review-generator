@@ -151,9 +151,11 @@
                         alert("Unable to auto-copy. Please copy manually.");
                     }
 
-                    // Auto redirect immediately
+                    // Auto redirect after 500ms delay
                     if (data.google_link) {
-                        window.location.href = data.google_link;
+                        setTimeout(() => {
+                            window.location.href = data.google_link;
+                        }, 500);
                     }
                 } else {
                     // If error, show error message
