@@ -1,25 +1,8 @@
-        async function deleteBusiness(slug) {
-            if (confirm(`Are you sure you want to delete the business "${slug}"? This action cannot be undone.`)) {
-                const response = await fetch(`${backendUrl}/api/businesses/${slug}`, {
-                    method: 'DELETE'
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Business deleted successfully');
-                    loadBusinesses();
-                } else {
-                    alert(result.error);
-                }
-            }
-        }
-
         async function loadPayments() {
             const res = await fetch(`${backendUrl}/api/payments`);
             const data = await res.json();
             const tbody = document.querySelector("#payments-table tbody");
             tbody.innerHTML = "";
-
-            data.sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
 
             data.forEach(p => {
                 const row = document.createElement("tr");
@@ -28,16 +11,9 @@
                     <td>${p.credits}</td>
                     <td>₹${p.amount}</td>
                     <td>₹${p.unit_price}</td>
-                    <td>${p.added_by}</td>
-                    <td>${new Date(p.timestamp).toLocaleString()}</td>
+                    <td>${p.razorpay_payment_id}</td>
+                    <td>${p.timestamp}</td>
                 `;
                 tbody.appendChild(row);
             });
         }
-
-        document.getElementById("payments-tab").onclick = () => {
-            document.getElementById("payments-section").style.display = "block";
-            loadPayments();
-        };
-
-        window.onload = loadBusinesses;
