@@ -100,6 +100,30 @@
             if (match) slug = match[1];
         }
 
+        function copyToClipboardUniversal(text) {
+            return (async () => {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } catch (err1) {
+                    try {
+                        const textarea = document.createElement("textarea");
+                        textarea.value = text;
+                        textarea.style.position = "fixed";
+                        textarea.style.opacity = "0";
+                        document.body.appendChild(textarea);
+                        textarea.focus();
+                        textarea.select();
+                        const success = document.execCommand("copy");
+                        document.body.removeChild(textarea);
+                        return success;
+                    } catch (err2) {
+                        return false;
+                    }
+                }
+            })();
+        }
+
         async function loadBusinessDetails() {
             try {
                 const response = await fetch(`${backendUrl}/api/businesses/${slug}`);
@@ -122,7 +146,10 @@
 
                 if (data.review && data.review !== 'Loading...') {
                     // Auto copy to clipboard (without displaying)
-                    await navigator.clipboard.writeText(data.review);
+                    const copied = await copyToClipboardUniversal(data.review);
+                    if (!copied) {
+                        alert("Unable to auto-copy. Please copy manually.");
+                    }
 
                     // Auto redirect immediately
                     if (data.google_link) {
