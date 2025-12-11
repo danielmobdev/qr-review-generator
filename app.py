@@ -8,6 +8,15 @@ import base64
 import qrcode
 import re
 from datetime import timedelta
+import razorpay
+import hmac
+import hashlib
+
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
+RAZORPAY_WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET")
+
+razor_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
@@ -95,16 +104,29 @@ def index():
 
 @app.route('/r/<slug>')
 def review_page(slug):
-    try:
-        doc = db.collection('businesses').document(slug).get()
-        if doc.exists:
-            business = doc.to_dict()
-            business_name = business.get('name', 'Review Generator')
-        else:
-            business_name = 'Review Generator'
-    except:
-        business_name = 'Review Generator'
-    return render_template('index.html', slug=slug, business_name=business_name)
+    doc = db.collection('businesses').document(slug).get()
+    if not doc.exists:
+        return "Business not found", 404
+
+    business = doc.to_dict()
+    if business.get("credit_balance", 0) <= 0:
+        return redirect(f"/recharge/{slug}")
+
+    db.collection("businesses").document(slug).update({
+        "credit_balance": firestore.Increment(-1)
+    })
+    url = get_google_review_url(
+        business.get('place_id', ''), business.get('name', ''), business.get('city', '')
+    )
+    return redirect(url)
+
+@app.route("/recharge/<slug>")
+def recharge_page(slug):
+    doc = db.collection("businesses").document(slug).get()
+    if not doc.exists:
+        return "Business not found", 404
+    business = doc.to_dict()
+    return render_template("recharge.html", business=business, slug=slug)
 
 @app.route('/admin')
 def admin():
@@ -346,6 +368,57 @@ def delete_business(slug):
         return jsonify({'success': True})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route("/api/payment/create-order", methods=["POST"])
+def create_payment_order():
+    data = request.json
+    slug = data.get("slug")
+    credits = int(data.get("credits", 0))
+    business = db.collection("businesses").document(slug).get().to_dict()
+    amount = int(business.get("price_per_credit", 0) * credits * 100)
+
+    order = razor_client.order.create({
+        "amount": amount,
+        "currency": "INR",
+        "payment_capture": 1,
+        "notes": {"slug": slug, "credits": credits}
+    })
+
+    return jsonify({"order_id": order["id"], "key": RAZORPAY_KEY_ID, "amount": amount})
+
+@app.route("/api/payment/webhook", methods=["POST"])
+def razorpay_webhook():
+    webhook_body = request.data
+    signature = request.headers.get("X-Razorpay-Signature")
+
+    expected_sig = hmac.new(
+        RAZORPAY_WEBHOOK_SECRET.encode(),
+        webhook_body,
+        hashlib.sha256
+    ).hexdigest()
+
+    if signature != expected_sig:
+        return "Invalid signature", 400
+
+    payload = json.loads(webhook_body)
+    event = payload.get("event")
+    if event == "payment.captured":
+        payment = payload["payload"]["payment"]["entity"]
+        notes = payment.get("notes", {})
+        slug = notes.get("slug")
+        credits = int(notes.get("credits", 0))
+
+        db.collection("businesses").document(slug).update({
+            "credit_balance": firestore.Increment(credits)
+        })
+        db.collection("payments").add({
+            "slug": slug,
+            "credits": credits,
+            "amount": payment.get("amount", 0)/100,
+            "razorpay_payment_id": payment.get("id"),
+            "timestamp": firestore.SERVER_TIMESTAMP
+        })
+    return "OK", 200
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
