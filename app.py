@@ -106,9 +106,6 @@ def review_page(slug):
     if business.get("credit_balance", 0) <= 0:
         return redirect(f"/recharge/{slug}")
 
-    db.collection("businesses").document(slug).update({
-        "credit_balance": firestore.Increment(-1)
-    })
     return render_template('index.html', slug=slug)
 
 @app.route("/recharge/<slug>")
