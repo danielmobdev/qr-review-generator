@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Recharge Credits</title>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+body{background:#0B0F19;color:white;font-family:Arial;text-align:center;padding:40px}
+input{padding:10px;font-size:16px;border-radius:6px;margin:10px auto;display:block}
+.btn{background:#FF8C32;padding:12px 24px;border:none;border-radius:8px;font-size:18px;cursor:pointer;color:#0B0F19}
+</style>
+</head>
+<body>
+<h1>{{ business.name }}</h1>
+<p>Credits Left: {{ business.credit_balance }}</p>
+<p>Price/Credit: ₹{{ business.price_per_credit }}</p>
+<input type="number" id="credits" placeholder="Enter credits">
+<button class="btn" onclick="payNow()">Recharge</button>
+
+<script>
+function payNow(){
+ let credits = document.getElementById("credits").value;
+ if (!credits) return alert("Enter credits");
+ fetch("/api/payment/create-order", {
+   method:"POST",
+   headers: {"Content-Type":"application/json"},
+   body:JSON.stringify({slug:"{{ slug }}", credits:parseInt(credits)})
+ })
+ .then(res=>res.json())
+ .then(data=>{
+   const options = {
+     "key": data.key,
+     "amount": data.amount,
+     "order_id": data.order_id,
+     "handler": () => { alert("Payment successful"); location.reload(); }
+   };
+   new Razorpay(options).open();
+ });
+}
+</script>
+</body>
+</html>
