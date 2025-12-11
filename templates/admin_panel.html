@@ -1,19 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAN AI - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></link>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: #0B0F19;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #121826;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .sidebar .dan {
+            color: #FFFFFF;
+        }
+
+        .sidebar .ai {
+            color: #FF8C32;
+        }
+
+        .sidebar-subtitle {
+            color: #A0A4B8;
+            font-size: 12px;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: #A0A4B8;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255, 140, 50, 0.1);
+            color: #FF8C32;
+        }
+
+        .sidebar-menu i {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            right: 20px;
+        }
+
+        .logout-btn a {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(220, 53, 69, 0.1);
+            color: #FF6B7A;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .logout-btn a:hover {
+            background: rgba(220, 53, 69, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .header .dan {
+            color: #FFFFFF;
+        }
+
+        .header .ai {
+            color: #FF8C32;
+        }
+
+        /* Metrics Cards */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #FF8C32;
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            color: #A0A4B8;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .content-card h2 {
+            color: #FFFFFF;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #FFFFFF;
+            font-size: 16px;
+            font-family: 'Open Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #FF8C32;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 3px rgba(255, 140, 50, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: #A0A4B8;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .submit-btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #FF8C32 0%, #FFA94D 100%);
+            color: #0B0F19;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Open Sans', sans-serif;
+            margin-top: 24px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 140, 50, 0.4);
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            color: #FFFFFF;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(40, 167, 69, 0.2);
+            color: #4ADE80;
+        }
+
+        .status-inactive {
+            background: rgba(108, 117, 125, 0.2);
+            color: #9CA3AF;
+        }
+
+        .actions-cell {
+            white-space: nowrap;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            margin: 2px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn {
+            background: rgba(0, 123, 255, 0.2);
+            color: #60A5FA;
+        }
+
+        .edit-btn:hover {
+            background: rgba(0, 123, 255, 0.3);
+        }
+
+        .recharge-btn {
+            background: rgba(255, 193, 7, 0.2);
+            color: #FCD34D;
+        }
+
+        .recharge-btn:hover {
+            background: rgba(255, 193, 7, 0.3);
+        }
+
+        .view-btn {
+            background: rgba(23, 162, 184, 0.2);
+            color: #5BC0DE;
+        }
+
+        .view-btn:hover {
+            background: rgba(23, 162, 184, 0.3);
+        }
+
+        .download-btn {
+            background: rgba(108, 117, 125, 0.2);
+            color: #9CA3AF;
+        }
+
+        .download-btn:hover {
+            background: rgba(108, 117, 125, 0.3);
+        }
+
+        .delete-btn {
+            background: rgba(220, 53, 69, 0.2);
+            color: #EF4444;
+        }
+
+        .delete-btn:hover {
+            background: rgba(220, 53, 69, 0.3);
+        }
+
+        .qr-preview {
+            max-width: 40px;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                margin-left: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-text">
+                    <span class="dan">DAN</span><span class="ai">AI</span>
+                </div>
+                <div class="sidebar-subtitle">ADMIN DASHBOARD</div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active"><i data-lucide="layout-dashboard"></i>Dashboard</a></li>
+                <li><a href="#"><i data-lucide="building"></i>Businesses</a></li>
+                <li><a href="#"><i data-lucide="users"></i>Users</a></li>
+                <li><a href="#"><i data-lucide="bar-chart-3"></i>Analytics</a></li>
+                <li><a id="payments-tab"><i data-lucide="credit-card"></i>Payments</a></li>
+                <li><a href="#"><i data-lucide="settings"></i>Settings</a></li>
+            </ul>
+
+            <div class="logout-btn">
+                <a href="/logout">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1><span class="dan">DAN</span><span class="ai">AI</span> Admin Dashboard</h1>
+            </div>
+
+            <!-- Metrics -->
+            <div class="metrics">
+                <div class="metric-card">
+                    <div class="metric-value" id="total-businesses">0</div>
+                    <div class="metric-label">Total Businesses</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="total-credits">0</div>
+                    <div class="metric-label">Total Credits</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="today-usage">0</div>
+                    <div class="metric-label">Today's Usage</div>
+                </div>
+            </div>
+
+            <!-- Add Business Form -->
+            <div class="content-card">
+                <h2>Add New Business</h2>
+                <form id="add-form" class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Business Name *</label>
+                        <input type="text" id="name" placeholder="Enter business name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <input type="text" id="category" placeholder="e.g., Digital Marketing, Restaurant" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City *</label>
+                        <input type="text" id="city" placeholder="Enter city name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact_person_name">Contact Person Name *</label>
+                        <input type="text" id="contact_person_name" placeholder="Enter contact person name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact_number">Contact Number *</label>
+                        <input type="tel" id="contact_number" placeholder="Enter phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="place_id">Google Place ID *</label>
+                        <input type="text" id="place_id" placeholder="Enter Google Place ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="services">Services *</label>
+                        <input type="text" id="services" placeholder="SEO, Web Design, Marketing (comma separated)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="credit_balance">Starting Credits *</label>
+                        <input type="number" id="credit_balance" placeholder="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price_per_credit">Price per Credit *</label>
+                        <input type="number" step="0.01" id="price_per_credit" placeholder="0.50" required>
+                    </div>
+                    <div class="checkbox-group">
+                        <label for="active"><input type="checkbox" id="active" checked> Active Business</label>
+                    </div>
+                    <button type="submit" class="submit-btn">Add Business</button>
+                </form>
+            </div>
+
+            <!-- Businesses Table -->
+            <div class="content-card">
+                <h2>Business Management</h2>
+                <div class="table-container">
+                    <table id="businesses-table">
+                        <thead>
+                            <tr>
+                                <th>Business Name</th>
+                                <th>Category</th>
+                                <th>City</th>
+                                <th>Contact Person</th>
+                                <th>Contact</th>
+                                <th>Credits</th>
+                                <th>Status</th>
+                                <th>QR Code</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payments Section -->
+            <div id="payments-section" style="display:none;">
+                <h2>All Payments</h2>
+                <table id="payments-table">
+                    <thead>
+                        <tr><th>Business</th><th>Credits</th><th>Amount</th><th>₹/Credit</th><th>Payment ID</th><th>Date</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const backendUrl = window.location.origin;
+
+        async function loadBusinesses() {
+            const response = await fetch(`${backendUrl}/api/businesses`);
+            const businesses = await response.json();
+            const tbody = document.querySelector('#businesses-table tbody');
+            tbody.innerHTML = '';
+            businesses.forEach(business => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${business.name}</td>
+                    <td>${business.category}</td>
+                    <td>${business.city}</td>
+                    <td>${business.contact_person_name || 'N/A'}</td>
+                    <td>${business.contact_number || 'N/A'}</td>
+                    <td>${business.credit_balance}</td>
+                    <td><span class="status-badge ${business.active ? 'status-active' : 'status-inactive'}">${business.active ? 'Active' : 'Inactive'}</span></td>
+                    <td><img src="/qr/${business.slug}" alt="QR Code" class="qr-preview"></td>
+                    <td class="actions-cell">
+                        <button onclick="editBusiness('${business.slug}')" class="action-btn edit-btn">Edit</button>
+                        <button onclick="recharge('${business.slug}')" class="action-btn recharge-btn">Recharge</button>
+                        <a href="/r/${business.slug}" target="_blank" class="action-btn view-btn">View</a>
+                        <button onclick="downloadQR('${business.slug}')" class="action-btn download-btn">Download</button>
+                        <button onclick="deleteBusiness('${business.slug}')" class="action-btn delete-btn">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        document.getElementById('add-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('name').value,
+                category: document.getElementById('category').value,
+                city: document.getElementById('city').value,
+                contact_person_name: document.getElementById('contact_person_name').value,
+                contact_number: document.getElementById('contact_number').value,
+                place_id: document.getElementById('place_id').value,
+                services: document.getElementById('services').value,
+                credit_balance: parseInt(document.getElementById('credit_balance').value),
+                price_per_credit: parseFloat(document.getElementById('price_per_credit').value),
+                active: document.getElementById('active').checked
+            };
+            const response = await fetch(`${backendUrl}/api/businesses`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert(`Business added. Slug: ${result.slug}, URL: ${result.url}`);
+                loadBusinesses();
+            } else {
+                alert(result.error);
+            }
+        });
+
+        async function editBusiness(slug) {
+            // Simple edit: prompt for new values
+            const newCredits = prompt('New credit balance:');
+            if (newCredits !== null) {
+                await fetch(`${backendUrl}/api/businesses/${slug}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ credit_balance: parseInt(newCredits) })
+                });
+                loadBusinesses();
+            }
+        }
+
+        async function recharge(slug) {
+            const credits = prompt('Credits to add:');
+            if (credits) {
+                await fetch(`${backendUrl}/api/businesses/${slug}/recharge`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ credits: parseInt(credits) })
+                });
+                loadBusinesses();
+            }
+        }
+
+        function downloadQR(slug) {
+            const link = document.createElement('a');
+            link.href = `/static/qr_${slug}.png`;
+            link.download = `qr_${slug}.png`;
+            link.click();
+        }
+
+        async function deleteBusiness(slug) {
+            if (confirm(`Are you sure you want to delete the business "${slug}"? This action cannot be undone.`)) {
+                const response = await fetch(`${backendUrl}/api/businesses/${slug}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Business deleted successfully');
+                    loadBusinesses();
+                } else {
+                    alert(result.error);
+                }
+            }
+        }
+
         async function loadPayments() {
             const res = await fetch(`${backendUrl}/api/payments`);
             const data = await res.json();
             const tbody = document.querySelector("#payments-table tbody");
             tbody.innerHTML = "";
-
             data.forEach(p => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
+                tbody.innerHTML += `
+                <tr>
                     <td>${p.business_name}</td>
                     <td>${p.credits}</td>
                     <td>₹${p.amount}</td>
                     <td>₹${p.unit_price}</td>
                     <td>${p.razorpay_payment_id}</td>
                     <td>${p.timestamp}</td>
-                `;
-                tbody.appendChild(row);
+                </tr>`;
             });
         }
+
+        document.getElementById("payments-tab").onclick = () => {
+            loadPayments();
+            document.getElementById("payments-section").style.display = "block";
+        };
+
+        window.onload = loadBusinesses;
+    </script>
+</body>
+</html>
