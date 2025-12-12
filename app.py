@@ -188,77 +188,56 @@ def generate_review_route(slug):
         else:
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
+        # STEP 1 — Create AI opener generator
+        opener_prompt = """
+        Generate one natural human sentence starter for a Google review.
+        RULES:
+        - No special characters except . and ,
+        - Must not include business name city or category
+        - Must sound like a real person speaking casually
+        - Must not sound like marketing or AI-generated text
+        - Keep between 4 to 10 words
+        Output only the opener text. No quotes.
+        """
+
+        try:
+            opener_resp = model.generate_content(opener_prompt)
+            opening_line = opener_resp.text.strip()
+        except:
+            opening_line = "I did not expect such a good experience"
+
+        # STEP 2 — Random placement for business name, city, and category
         import random
-
-        services_list = [s.strip() for s in services.split(",") if s.strip()]
-        selected_service = random.choice(services_list) if services_list else services
-
-        opening_styles = [
-            "I did not expect such a good experience",
-            "The service really impressed me",
-            "I visited without knowing what to expect",
-            "My experience turned out better than I thought",
-            "In this city it is hard to find good service",
-            "I felt comfortable from the beginning",
-            "It was a surprisingly positive experience",
-            "I rarely write reviews but this one felt needed"
+        placements = [
+            f"{opening_line}. I visited {business['name']} in {business['city']} for their {category} services and",
+            f"{opening_line}. In {business['city']} I found {business['name']} offering great {category} service and",
+            f"{opening_line}. The {category} service at {business['name']} in {business['city']} really",
+            f"{opening_line}. Many people in {business['city']} recommended {business['name']} for {category} and it"
         ]
-        opening_line = random.choice(opening_styles)
+        first_sentence = random.choice(placements)
 
-        tones = [
-            "warm and supportive",
-            "simple and straightforward",
-            "personal and emotional",
-            "calm and neutral",
-            "thankful and appreciative",
-            "friendly and conversational"
-        ]
-        tone_style = random.choice(tones)
-
-        structures = [
-            "result then experience then business name",
-            "experience then service then city mention",
-            "feeling then benefit then recommendation",
-            "service then outcome then business name",
-            "city then problem then improvement",
-            "benefit then experience then service"
-        ]
-        structure_style = random.choice(structures)
-
+        # STEP 3 — Build full review prompt
         prompt = f"""
-Write ONE realistic Google Business review using ONLY these characters:
-a–z A–Z 0–9 . ,
+Write ONE realistic Google Business review based on the following first sentence:
 
-NOT allowed:
-; : - — _ ( ) [ ] {{ }} ! ? * / \ " ' …
+STARTER:
+{first_sentence}
 
-START THE REVIEW WITH THIS RANDOM OPENER:
-{opening_line}
-
-TONE TO USE:
-{tone_style}
-
-FOLLOW THIS STRUCTURE IDEA (keep natural):
-{structure_style}
-
-Business Details:
+BUSINESS:
 Name: {business['name']}
-Category: {category}
 City: {business['city']}
-Focus Service: {selected_service}
+Category: {category}
+Services: {services}
 
-CRITICAL RULES:
-- Review must be 2–3 natural sentences.
-- Must sound human NOT AI.
-- Must NOT follow fixed patterns.
-- No repeated words.
-- No advertisement tone.
-- Include all three anywhere:
-  {business['name']}, {business['city']}, {category}
-- Mention one real benefit like support quality results or improvement.
-- End with a natural recommendation.
-- Do NOT use special characters.
-
+REQUIREMENTS:
+- Length: 2–3 natural sentences total
+- Continue the first sentence in a warm human personal tone
+- Mention ONE authentic outcome or feeling
+- End with a natural genuine recommendation
+- NO special characters except . and ,
+- NO emojis NO ! NO ? NO ';' NO '-' NO '()' NO quotes
+- Must not look like marketing or scripted
+- Must not repeat phrases
 Output ONLY the review text. No quotes.
 """
         try:
