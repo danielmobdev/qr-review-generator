@@ -188,62 +188,86 @@ def generate_review_route(slug):
         else:
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
+        import random
+
+        services_list = [s.strip() for s in services.split(",") if s.strip()]
+        selected_service = random.choice(services_list) if services_list else services
+
+        opening_styles = [
+            "I did not expect such a good experience",
+            "The service really impressed me",
+            "I visited without knowing what to expect",
+            "My experience turned out better than I thought",
+            "In this city it is hard to find good service",
+            "I felt comfortable from the beginning",
+            "It was a surprisingly positive experience",
+            "I rarely write reviews but this one felt needed"
+        ]
+        opening_line = random.choice(opening_styles)
+
+        tones = [
+            "warm and supportive",
+            "simple and straightforward",
+            "personal and emotional",
+            "calm and neutral",
+            "thankful and appreciative",
+            "friendly and conversational"
+        ]
+        tone_style = random.choice(tones)
+
+        structures = [
+            "result then experience then business name",
+            "experience then service then city mention",
+            "feeling then benefit then recommendation",
+            "service then outcome then business name",
+            "city then problem then improvement",
+            "benefit then experience then service"
+        ]
+        structure_style = random.choice(structures)
+
         prompt = f"""
-Write ONE realistic Google Business review for a real customer experience.
+Write ONE realistic Google Business review using ONLY these characters:
+a–z A–Z 0–9 . ,
+
+NOT allowed:
+; : - — _ ( ) [ ] {{ }} ! ? * / \ " ' …
+
+START THE REVIEW WITH THIS RANDOM OPENER:
+{opening_line}
+
+TONE TO USE:
+{tone_style}
+
+FOLLOW THIS STRUCTURE IDEA (keep natural):
+{structure_style}
 
 Business Details:
-- Name: {business['name']}
-- Category: {category}
-- City: {business['city']}
-- Services: {services}
+Name: {business['name']}
+Category: {category}
+City: {business['city']}
+Focus Service: {selected_service}
 
 CRITICAL RULES:
-- Generate ONLY ONE review.
-- Length must be exactly 2–3 natural sentences.
-- Must sound 100 percent human and personal.
-- Must NOT sound like an advertisement.
-- Must NOT follow a fixed structure.
-- Must NOT look patterned or repeated.
-
-PUNCTUATION RULES (EXTREMELY IMPORTANT):
-- Do NOT use any special characters.
-- Allowed characters: a–z A–Z 0–9 . ,
-- NOT allowed: ; : - — _ ( ) [ ] {{ }} ! ? * / \ " ' …
-- Do NOT use emojis or symbols.
-- Keep punctuation simple meaningful and human.
-
-RANDOM PLACEMENT RULE:
-- The business name city and category MUST appear naturally
-  but in random positions.
-
-CATEGORY UNDERSTANDING:
-- The review must reflect the real services from this category.
-
-SEARCH BEHAVIOR OPTIMIZATION:
-- Wording should naturally support phrases like
-  "{category} in {business['city']}"
-  "best {category} near me"
-  "top {category} in {business['city']}"
-
-MANDATORY:
-- Must include all three somewhere:
+- Review must be 2–3 natural sentences.
+- Must sound human NOT AI.
+- Must NOT follow fixed patterns.
+- No repeated words.
+- No advertisement tone.
+- Include all three anywhere:
   {business['name']}, {business['city']}, {category}
-- Mention one real benefit like service quality hygiene results or support.
+- Mention one real benefit like support quality results or improvement.
 - End with a natural recommendation.
+- Do NOT use special characters.
 
-STYLE:
-- Human warm natural
-- No keyword stuffing
-- No robotic tone
-- No repeated patterns
-
-Output ONLY the review text. Do not include quotes.
+Output ONLY the review text. No quotes.
 """
         try:
             response = model.generate_content(prompt)
             review = response.text.strip()
         except Exception as e:
             review = f"{business['name']} is an excellent {business['category']} in {business['city']}. Their services are highly recommended."
+        allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789., "
+        review = "".join(c for c in review if c in allowed)
         place_id_url = get_google_review_url(business.get('place_id', ''), business.get('name', ''), business.get('city', ''))
         return jsonify({'review': review, 'google_link': place_id_url})
     except Exception as e:
