@@ -220,14 +220,27 @@ def generate_review_route(slug):
 
         # STEP 1 — Create AI opener generator
         opener_prompt = """
-        Generate one natural human sentence starter for a Google review.
+        Generate ONE natural human sentence starter for a Google review.
+
         RULES:
+        - Must NOT include business name, city, category or services
+        - Must be 100% random sounding, no repeated patterns
+        - Must feel like a real person starting a story or sharing a feeling
+        - Keep between 5–12 words
         - No special characters except . and ,
-        - Must not include business name city or category
-        - Must sound like a real person speaking casually
-        - Must not sound like marketing or AI-generated text
-        - Keep between 4 to 10 words
-        Output only the opener text. No quotes.
+        - No marketing tone
+        - No perfect grammar required (slight natural errors allowed)
+        - Choose RANDOMLY from one of these styles:
+
+        1. Observation tone
+        2. Feeling-based tone
+        3. Mini-story tone
+        4. Result-based tone
+        5. Comparison tone
+        6. Casual conversational tone
+        7. Experience-start tone
+
+        Output ONLY the opener text. No quotes. No punctuation at the end.
         """
 
         try:
