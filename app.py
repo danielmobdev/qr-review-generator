@@ -261,46 +261,30 @@ def generate_review_route(slug):
 
         # STEP 3 — Build full review prompt
         prompt = f"""
-Write ONE realistic Google Business review for a real customer experience.
+Write ONE simple and natural Google review in Indian English.
 
-FIRST SENTENCE (continue naturally):
+FIRST SENTENCE (must continue this naturally):
 {first_sentence}
 
 BUSINESS DETAILS:
 - Name: {business['name']}
 - City: {business['city']}
 - Category: {category}
-- Services Provided: {services}
+- Services: {services}
 
-SERVICE CONTEXT (must appear naturally in the review):
-{service_text}
+STRICT RULES:
+- Mention the business name ONLY ONCE in the entire review.
+- Mention the city ONLY ONCE.
+- Mention the category ONLY ONCE.
+- Use simple Indian English that feels like normal day-to-day speaking.
+- Length: 2–3 short sentences.
+- No dramatic tone, no slang, no wow, no honestly.
+- Must mention ONE real benefit or experience.
+- End with a simple natural recommendation.
+- NO special characters except . and ,
+- Do NOT repeat the business name at the end.
 
-TONE STYLE:
-Choose ONE tone randomly and write the review in that tone:
-1. Friendly and warm
-2. Emotional and comforting
-3. Simple English
-4. Professional and clear
-5. Calm and neutral
-6. Experience-focused
-7. Brief but meaningful
-
-REQUIREMENTS:
-- Total length: exactly 2 to 3 natural human sentences.
-- Continue the given first sentence smoothly.
-- Include the service context naturally, without forcing it.
-- Mention one genuine outcome or feeling.
-- End with a natural recommendation.
-- RANDOM placement of business name, city, and category must be preserved.
-- Must NOT sound like advertising or robotic.
-- Must NOT repeat patterns.
-
-STRICT PUNCTUATION RULES:
-- Allowed characters ONLY: a-z A-Z 0-9 . ,
-- NOT allowed: ! ? ; : - — _ ( ) [ ] {{ }} " ' / \ * emojis or symbols
-- No special characters except period and comma.
-
-Output ONLY the final review text. No quotes. No explanations.
+Output ONLY the final review text with NO quotes.
 """
         try:
             response = model.generate_content(prompt)
