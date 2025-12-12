@@ -188,6 +188,36 @@ def generate_review_route(slug):
         else:
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
+        ############################################
+        # NEW: Optional Random Service Injection
+        ############################################
+        selected_service = ""
+
+        try:
+            # Parse services into a clean list
+            service_list = [
+                s.strip()
+                for s in services.split(",")
+                if s.strip()
+            ]
+
+            import random
+
+            if service_list:
+                # 50% chance to include a service in the prompt
+                if random.random() < 0.5:
+                    selected_service = random.choice(service_list)
+                else:
+                    selected_service = ""
+        except Exception:
+            selected_service = ""
+
+        # Prepare text to inject into prompt
+        if selected_service:
+            service_text = f"The experience involved {selected_service.lower()}."
+        else:
+            service_text = "The experience was based on the actual service used by the customer."
+
         # STEP 1 — Create AI opener generator
         opener_prompt = """
         Generate one natural human sentence starter for a Google review.
@@ -218,31 +248,51 @@ def generate_review_route(slug):
 
         # STEP 3 — Build full review prompt
         prompt = f"""
-Write ONE realistic Google Business review based on the following first sentence:
+Write ONE realistic Google Business review for a real customer experience.
 
-STARTER:
+FIRST SENTENCE (continue naturally):
 {first_sentence}
 
-BUSINESS:
-Name: {business['name']}
-City: {business['city']}
-Category: {category}
-Services: {services}
+BUSINESS DETAILS:
+- Name: {business['name']}
+- City: {business['city']}
+- Category: {category}
+- Services Provided: {services}
+
+SERVICE CONTEXT (must appear naturally in the review):
+{service_text}
+
+TONE STYLE:
+Choose ONE tone randomly and write the review in that tone:
+1. Friendly and warm
+2. Emotional and comforting
+3. Simple English
+4. Professional and clear
+5. Calm and neutral
+6. Experience-focused
+7. Brief but meaningful
 
 REQUIREMENTS:
-- Length: 2–3 natural sentences total
-- Continue the first sentence in a warm human personal tone
-- Mention ONE authentic outcome or feeling
-- End with a natural genuine recommendation
-- NO special characters except . and ,
-- NO emojis NO ! NO ? NO ';' NO '-' NO '()' NO quotes
-- Must not look like marketing or scripted
-- Must not repeat phrases
-Output ONLY the review text. No quotes.
+- Total length: exactly 2 to 3 natural human sentences.
+- Continue the given first sentence smoothly.
+- Include the service context naturally, without forcing it.
+- Mention one genuine outcome or feeling.
+- End with a natural recommendation.
+- RANDOM placement of business name, city, and category must be preserved.
+- Must NOT sound like advertising or robotic.
+- Must NOT repeat patterns.
+
+STRICT PUNCTUATION RULES:
+- Allowed characters ONLY: a-z A-Z 0-9 . ,
+- NOT allowed: ! ? ; : - — _ ( ) [ ] {{ }} " ' / \ * emojis or symbols
+- No special characters except period and comma.
+
+Output ONLY the final review text. No quotes. No explanations.
 """
         try:
             response = model.generate_content(prompt)
             review = response.text.strip()
+            review = re.sub(r"[^a-zA-Z0-9.,\s]", "", review)  # Hard clean special chars
         except Exception as e:
             review = f"{business['name']} is an excellent {business['category']} in {business['city']}. Their services are highly recommended."
         allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789., "
