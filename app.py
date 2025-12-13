@@ -189,136 +189,145 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-You are generating ONE Google Business review.
-This must look like a genuine review written by a real Indian customer.
-The review MUST NOT look templated or repetitive. Vary language, structure, and details heavily to mimic natural human variation.
+You are generating ONE authentic Google Business review written by a real Indian customer.
+The review must feel completely natural, personal, and unique every single time – no patterns or repetitions across generations.
 
 BUSINESS DETAILS:
 - Name: {business['name']}
 - City: {business['city']}
 - Category: {category}
-- Services: {services}
+- Services focus: {services}
 
 --------------------------------------------------
-GLOBAL RULES (STRICT)
+CORE RULES (MUST FOLLOW STRICTLY)
 --------------------------------------------------
-1. Write ONLY 2–4 short sentences for natural flow.
-2. Use simple, everyday Indian English with occasional local flavor (e.g., slight informal phrasing like 'a bit' or 'quite').
+1. Write 3–5 short, casual sentences only.
+2. Use normal Indian English (simple, calm, human).
 3. Do NOT start with the business name or city.
-4. Mention the business name EXACTLY once, integrated smoothly.
-5. Mention the city EXACTLY once, woven naturally (e.g., 'in Bhubaneswar area').
-6. Reference the category subtly through context, never directly.
-7. Transform services into PERSONAL, RELATABLE EXPERIENCES (e.g., instead of 'consultation', say 'had a good chat about my concerns').
-8. Grammar should be clean but imperfect – like real speech (e.g., minor contractions).
-9. No emojis, no exclamation marks, no hashtags.
-10. Avoid hype words like wow, amazing, fantastic, best ever. Keep positive but understated.
-11. Ensure every review feels unique: vary vocabulary, sentence length, and focus.
+4. Mention the business name EXACTLY once.
+5. Mention the city EXACTLY once.
+6. Mention the category indirectly (never repeat the same phrase).
+7. Convert services into REAL HUMAN EXPERIENCES.
+8. Grammar must be clean and easy to understand.
+9. No emojis, no exclamation marks.
+10. No dramatic words like wow, amazing, honestly.
+11. Reviews must feel different every time.
 
 --------------------------------------------------
-CATEGORY INTELLIGENCE (VERY IMPORTANT)
+CATEGORY-SPECIFIC GUIDANCE (ADAPT NATURALLY)
 --------------------------------------------------
-Adapt deeply to category for authenticity and SEO relevance:
+Always tailor to the category for realism:
 
-IF category is DOCTOR / PSYCHIATRIST / CLINIC:
-- Naturally weave in everyday issues: feeling anxious, low energy, trouble sleeping, daily stress, emotional ups and downs, habit struggles.
-- Focus on personal benefits: felt heard, got practical tips, noticed improvement over time, clearer mindset.
-- Mention aspects like calm approach, clean setup, helpful staff indirectly.
-- Sound reflective and grateful, not promotional.
+Doctor / Clinic / Psychiatrist:
+- Issues: sleep trouble, low energy/mood, stress, anxiety, daily habits, feeling overwhelmed.
+- Focus: being heard, unhurried talk, practical advice, gradual improvement, feeling understood.
 
-IF category is HOSPITAL / DIAGNOSTIC:
-- Highlight smooth processes, supportive team, reliable results, sense of relief.
+Hospital / Diagnostic:
+- Smooth process, caring staff, clear reports, relief after visit, clean setup.
 
-IF category is HOTEL:
-- Touch on comfy rooms, good location, quiet stay, helpful front desk.
+Restaurant / Cafe:
+- Taste of dishes, portion size, service speed, comfortable seating, value.
 
-IF category is RESTAURANT / CAFE:
-- Describe tasty dishes, prompt service, cozy vibe, value for money.
+Hotel:
+- Clean room, comfortable bed, helpful staff, convenient spot, quiet stay.
 
-IF category is SALON / SPA:
-- Note relaxing treatment, neat results, hygienic space, friendly chat.
+Salon / Spa:
+- Relaxing treatment, neat results, clean place, friendly chat, good hygiene.
 
-IF category is GYM:
-- Mention effective workouts, motivating trainers, well-maintained gear, progress felt.
+Gym:
+- Helpful trainer, good equipment, noticeable progress, motivating setup, consistency help.
 
-IF category is BUSINESS / AGENCY / SERVICE:
-- Emphasize clear communication, timely delivery, positive outcomes, ongoing support.
+Photography / Studio:
+- Quality shots/video, timely delivery, cooperative team, creative ideas, nice editing.
 
-DO NOT list services or features. Pick 1-2 experiences randomly and describe personally.
-Incorporate SEO naturally: include location-based phrases, service hints that match common searches.
+Real Estate:
+- Clear dealing, helpful site visits, smooth legal stuff, good support, fair options.
 
---------------------------------------------------
-ANTI-REPETITION CONTROL
---------------------------------------------------
-❌ Avoid repetitive starters: Mix up completely (e.g., 'Lately I've been...', 'After trying a few places...', 'On a friend's advice...').
-Vary experiences: Don't reuse the same issue or benefit; randomize from services.
+Education:
+- Clear teaching, good guidance, helpful results, student care, practical tips.
 
---------------------------------------------------
-OPENING STYLE (PICK ONE RANDOMLY AND VARY)
---------------------------------------------------
-- Lately, things have been a bit off with...
-- A friend mentioned trying...
-- I was looking around for help with...
-- Decided to check out something for...
-- Had been dealing with some...
-- Felt like I needed to sort out...
-- Came across this while searching in...
-- It was time to address...
-- Struggling a little with...
-- Wanted a fresh perspective on...
+Digital Marketing / AI Digital Marketing:
+- Better online visibility, good ad results, lead growth, social media help, SEO improvements.
+
+Default / Other:
+- Good service, professional team, satisfied outcome, timely help.
+
+Pick 1–2 realistic aspects only – randomize from services, do not cover everything or repeat.
 
 --------------------------------------------------
-MIDDLE EXPERIENCE
+VARY THESE ELEMENTS EVERY TIME (RANDOMIZE FULLY)
 --------------------------------------------------
-Describe ONE-TWO real, specific moments:
-- A thoughtful conversation that cleared doubts.
-- Practical advice that fit my routine.
-- Noticed things getting better gradually.
-- Felt more at ease after the visit.
-- Appreciated the straightforward approach.
-- The environment was welcoming and tidy.
-Integrate business name here naturally (e.g., 'At {business['name']}, they explained...').
+Opening variations (pick one randomly, never repeat the same one often; mix structures):
+- Been having some issues with...
+- A colleague told me about...
+- Was looking for a place to handle...
+- Decided to try out something for...
+- Had been dealing with...
+- Felt like I should check on...
+- Came across this spot while...
+- It was getting tough with...
+- Wanted to get some help on...
+- Struggling a bit lately with...
+- Heard good things and went for...
+- Needed to sort out...
+
+Middle (personal touch – vary phrasing):
+- They took time to explain without hurry.
+- Got tips that actually work in daily life.
+- Felt easy talking about it all.
+- The place was clean and welcoming.
+- Noticed changes after following advice.
+- Staff was polite and knew their stuff.
+
+Ending variations (subtle, natural close – randomize):
+- Starting to see improvements.
+- It's helping out quite a bit.
+- Happy I chose this.
+- Feels reliable enough.
+- Might suggest to others.
+- Good local find.
+- Things are better now.
+- Worth checking out.
+- Left feeling positive.
+- Handled well overall.
 
 --------------------------------------------------
-BUSINESS NAME PLACEMENT
+BUSINESS NAME RULE
 --------------------------------------------------
-Mention {business['name']} EXACTLY ONCE, fluidly in context.
+Mention {business['name']} EXACTLY ONCE,
+in sentence 2 or 3.
+
 Examples:
-- During my visit to {business['name']}...
-- {business['name']} provided...
-- Found {business['name']} to be...
+- Visiting {business['name']} helped…
+- Talking things through at {business['name']} made…
+- The experience with {business['name']} felt…
+- I later visited {business['name']} and…
+- Choosing {business['name']} turned out to be helpful
 
 --------------------------------------------------
-CITY PLACEMENT
+CITY PLACEMENT RULE
 --------------------------------------------------
-Mention {business['city']} ONCE, casually.
+Mention {business['city']} ONCE,
+separate from business name.
+
 Examples:
-- right here in {business['city']}
-- over in {business['city']} side
-- local spot in {business['city']}
+- here in {business['city']}
+- around {business['city']}
+- in this part of {business['city']}
 
 --------------------------------------------------
-SEO-AWARE ENDING (PICK ONE RANDOMLY AND VARY)
+EXAMPLE TONE (for reference only – never copy structures or phrases directly)
 --------------------------------------------------
-- It's made a difference for me.
-- Would go back if needed.
-- Glad I chose this.
-- Helped more than I expected.
-- Feels like a reliable choice.
-- Settled things nicely.
-- Worth the time.
-- Left with better understanding.
-- Good experience overall.
-- Planning to recommend to others.
-
-Optimize for Google: End with subtle calls to local search intent, like implying reliability in the area.
+"Was feeling run down with poor sleep lately. Visited Serenity Clinic and Dr. Mishra listened carefully to what was going on. Gave me some easy changes to try. Slowly getting back on track here in Bhubaneswar. Decent option if you need help."
 
 --------------------------------------------------
 FINAL OUTPUT RULE
 --------------------------------------------------
-Return ONLY the final review text.
+Output ONLY the final review text.
 No quotes.
 No explanations.
-STOP immediately after the review.
+No formatting.
+No headings.
 """
         try:
             response = model.generate_content(prompt)
