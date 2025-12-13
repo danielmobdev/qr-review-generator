@@ -189,7 +189,9 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-WRITE A SIMPLE 2–3 SENTENCE REVIEW (INDIAN ENGLISH)
+You are generating ONE Google Business review.
+This must look like a genuine review written by a real Indian customer.
+The review MUST NOT look repetitive or templated.
 
 BUSINESS DETAILS:
 - Name: {business['name']}
@@ -197,118 +199,129 @@ BUSINESS DETAILS:
 - Category: {category}
 - Services: {services}
 
------------------------------------------
-RULES
------------------------------------------
-1. Do NOT start with the business name or the city.
-2. Mention business name EXACTLY once in sentence 2 or 3.
-3. Mention city EXACTLY once but NEVER directly next to the business name.
-4. Mention category (psychiatrist etc.) once, but vary expression:
-   - "the psychiatrist here"
-   - "their psychiatric guidance"
-   - "the doctor’s support"
-   - "the medical guidance here"
-   Never say "good psychiatrist" every time.
-   Never say "as a psychiatrist".
-5. Convert service names into human experiences:
-   anxiety → feeling anxious or worried
-   depression → low mood
-   addiction → habit issues
-   neuropsychiatrist → behaviour or confusion issues
-6. Use contractions: I’ve, it’s, he’s, I’m, didn’t, wasn’t.
-7. Simple, natural, everyday Indian-English tone.
-8. NO dramatic words: wow, amazing, wonderful, honestly.
-9. NO emojis and NO exclamation marks.
-10. No repetitive patterns across reviews.
+--------------------------------------------------
+GLOBAL RULES (NON-NEGOTIABLE)
+--------------------------------------------------
+1. Write ONLY 2–3 short sentences.
+2. Use simple, natural Indian English.
+3. Do NOT start with the business name or city.
+4. Mention the business name EXACTLY once.
+5. Mention the city EXACTLY once.
+6. Mention the category ONCE, indirectly (never repetitive phrasing).
+7. Convert services into real human experiences, not service labels.
+8. No emojis, no exclamation marks.
+9. No dramatic words like wow, amazing, honestly, wonderful.
+10. Grammar must be clean, natural, and correctly punctuated.
+11. Reviews must feel different every time.
 
------------------------------------------
-RANDOM OPENING (CHOOSE ONE)
------------------------------------------
-Pick ONE randomly from the following styles:
+--------------------------------------------------
+ANTI-REPETITION ENFORCEMENT (CRITICAL)
+--------------------------------------------------
+❌ Do NOT start most reviews with:
+"I've been", "I was", "I felt"
 
-1) I’ve been feeling…
-2) I was trying to…
-3) Lately I noticed…
-4) For some time I felt…
-5) I wanted clarity about…
-6) Something felt off and…
-7) I wasn’t sure why…
-8) I needed help understanding…
-9) I’d been processing a few things…
-10) I felt a bit overwhelmed…
+If a similar opening was used recently,
+you MUST choose a different sentence structure.
 
-Use one randomly:
-- I’ve been dealing with…
-- I was trying to understand…
-- I’ve been feeling a bit low…
-- I was having some trouble with…
-- I’ve been stressed lately…
-- I’ve been feeling quite overwhelmed…
-- I wanted clarity about…
-- I’ve been worried for a while…
-- I felt confused about a few things…
-- I needed some guidance for…
-- Lately I noticed…
-- For some time I felt…
-- Something felt off and…
-- I wasn’t sure why…
-- I’d been processing a few things…
-- I felt a bit overwhelmed…
+--------------------------------------------------
+OPENING STYLE (PICK ONE RANDOMLY)
+--------------------------------------------------
 
------------------------------------------
-RANDOM MIDDLE STRUCTURE (CHOOSE ONE)
------------------------------------------
-- and the session helped me look at things better.
-- and the doctor explained things in a simple way.
-- and the guidance made the situation easier.
-- and the support felt calm and steady.
-- and the doctor helped me understand the reasons behind it.
-- and their psychiatric approach made things clearer.
-- and the conversation felt comfortable.
-- and the guidance was patient and reassuring.
-- and I could talk without feeling judged.
+STYLE A — Situation-based:
+"Something wasn’t working the way I expected"
+"Things didn’t feel clear at first"
+"A few things needed sorting out"
+"It took time to understand what I needed"
+"Handling everything alone wasn’t easy"
 
------------------------------------------
-BUSINESS INSERTION RULE
------------------------------------------
-Place the business name EXACTLY once in sentence 2 or 3, like:
-- "I visited **{business['name']}** later…"
-- "The guidance at **{business['name']}** felt helpful…"
-- "Talking to **{business['name']}** made things clearer…"
+STYLE B — Decision-based:
+"I decided to check this place after some thought"
+"I felt it was time to try a different approach"
+"I chose to get some proper guidance"
+"I thought it would help to speak to professionals"
+"I went in hoping for some clarity"
 
------------------------------------------
-CITY INSERTION RULE
------------------------------------------
-City must appear once, but randomly in sentence 2 or 3:
+STYLE C — Recommendation-based:
+"Someone I trust suggested this place"
+"I heard about this place while asking around"
+"This was recommended to me by others"
+"I came here after a referral"
+"A recommendation led me here"
+
+STYLE D — Neutral human start:
+"There was a lot going on recently"
+"Things felt slightly overwhelming"
+"My situation needed attention"
+"Daily routines started feeling difficult"
+"I needed some outside perspective"
+
+STYLE E — Experience-first:
+"From the first interaction, things felt comfortable"
+"The overall experience felt calm"
+"Conversations here were easy and clear"
+"The approach here felt practical"
+"Things were explained in a simple way"
+
+--------------------------------------------------
+SERVICE HANDLING (UNIVERSAL)
+--------------------------------------------------
+From the provided services, randomly select 1–2 items
+and convert them into EXPERIENCES:
+
+Examples:
+• salon → comfort, hygiene, styling experience
+• restaurant → food quality, service, ambience
+• hotel → stay comfort, cleanliness, staff behaviour
+• clinic → guidance, clarity, comfort
+• gym → training support, motivation, equipment
+• agency → clarity, results, communication
+• studio → professionalism, output quality
+• real estate → guidance, transparency, support
+
+NEVER list services.
+ALWAYS describe how it felt for the customer.
+
+--------------------------------------------------
+BUSINESS NAME PLACEMENT
+--------------------------------------------------
+Mention {business['name']} EXACTLY once,
+in sentence 2 or 3, naturally embedded.
+
+Examples:
+- "The experience at {business['name']} helped…"
+- "Talking to {business['name']} made things clearer…"
+- "Support from {business['name']} felt reliable…"
+
+--------------------------------------------------
+CITY PLACEMENT
+--------------------------------------------------
+Mention {business['city']} ONCE, separated from the business name.
+
+Examples:
 - "here in {business['city']}"
-- "in this part of {business['city']}"
 - "around {business['city']}"
-NEVER next to business name.
+- "in this part of {business['city']}"
 
------------------------------------------
-RANDOM VARIED ENDINGS (CHOOSE ONE)
------------------------------------------
-Use exactly one:
-- I’m starting to feel a bit more sorted now.
-- It’s been steady and helpful for me.
-- I’m feeling lighter these days.
-- It gave me some clarity that I needed.
-- I’m slowly getting better with the support.
-- It’s been a comfortable experience for me.
-- I’m feeling more confident now.
-- It helped me think more clearly.
-- I’m beginning to feel more normal again.
-- It’s been reassuring for me.
-- I’m seeing small but positive changes.
-- It made things easier to manage.
-- I’m glad I reached out for help.
+--------------------------------------------------
+ENDING VARIATION (PICK ONE RANDOMLY)
+--------------------------------------------------
+- Things feel easier to manage now.
 - I’m feeling more settled now.
-- It’s been a reliable support overall.
+- It’s been steady and helpful.
+- I’m glad I went ahead with this.
+- It brought useful clarity.
+- The experience felt reassuring.
+- I feel more confident now.
+- It helped me think clearly.
+- Overall, it was a good decision.
+- It worked well for my situation.
 
------------------------------------------
-OUTPUT FORMAT
------------------------------------------
-Output ONLY the final 2–3 sentence review without quotes.
+--------------------------------------------------
+FINAL OUTPUT RULE
+--------------------------------------------------
+Return ONLY the final review text.
+No quotes.
+No explanations.
 """
         try:
             response = model.generate_content(prompt)
