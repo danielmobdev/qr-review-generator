@@ -189,145 +189,106 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-You are generating ONE authentic Google Business review written by a real Indian customer.
-The review must feel completely natural, personal, and unique every single time – no patterns or repetitions across generations.
+You are generating ONE genuine Google Business review written by a real Indian customer.
+
+The review must sound natural, personal, and unplanned — like someone typing from real experience.
+Do NOT sound like an advertisement.
+Do NOT follow a fixed structure.
 
 BUSINESS DETAILS:
 - Name: {business['name']}
-- City: {business['city']}
 - Category: {category}
-- Services focus: {services}
+- City: {business['city']}
+- Services: {services}
 
---------------------------------------------------
-CORE RULES (MUST FOLLOW STRICTLY)
---------------------------------------------------
-1. Write 3–5 short, casual sentences only.
-2. Use normal Indian English (simple, calm, human).
-3. Do NOT start with the business name or city.
-4. Mention the business name EXACTLY once.
-5. Mention the city EXACTLY once.
-6. Mention the category indirectly (never repeat the same phrase).
-7. Convert services into REAL HUMAN EXPERIENCES.
-8. Grammar must be clean and easy to understand.
-9. No emojis, no exclamation marks.
-10. No dramatic words like wow, amazing, honestly.
-11. Reviews must feel different every time.
+---------------------------------------
+STRICT RULES (VERY IMPORTANT)
+---------------------------------------
+1. Write ONLY 2–3 natural sentences.
+2. Do NOT start with the business name or the city.
+3. Mention the business name EXACTLY once.
+4. Mention the city EXACTLY once.
+5. Mention the category ONLY indirectly (never repeat fixed phrases).
+6. Convert services into real-life experiences — NEVER list services.
+7. Keep simple Indian English (calm, polite, everyday tone).
+8. No emojis, no exclamation marks.
+9. No hype words like wow, amazing, best, honestly.
+10. Every review must feel different from the previous one.
 
---------------------------------------------------
-CATEGORY-SPECIFIC GUIDANCE (ADAPT NATURALLY)
---------------------------------------------------
-Always tailor to the category for realism:
+---------------------------------------
+HOW TO USE SERVICES (CRITICAL)
+---------------------------------------
+From the provided services, PICK ONLY ONE OR TWO ideas
+and convert them into a HUMAN EXPERIENCE.
 
-Doctor / Clinic / Psychiatrist:
-- Issues: sleep trouble, low energy/mood, stress, anxiety, daily habits, feeling overwhelmed.
-- Focus: being heard, unhurried talk, practical advice, gradual improvement, feeling understood.
+Examples (DO NOT COPY, JUST UNDERSTAND):
+- psychiatrist → feeling anxious, habit issues, low mood, stress
+- clinic → calm discussion, clear guidance, clean environment
+- restaurant → food taste, service speed, comfort
+- hotel → clean room, quiet stay, helpful staff
+- salon → neat results, hygiene, relaxed feel
+- gym → trainer support, consistency, energy
+- marketing agency → better visibility, leads, communication
+- photography → quality output, coordination, delivery
 
-Hospital / Diagnostic:
-- Smooth process, caring staff, clear reports, relief after visit, clean setup.
+NEVER mention service names directly.
+ALWAYS describe how it felt for the customer.
 
-Restaurant / Cafe:
-- Taste of dishes, portion size, service speed, comfortable seating, value.
+---------------------------------------
+OPENING (RANDOM, NATURAL – PICK ONE STYLE)
+---------------------------------------
+- A few things needed sorting out.
+- Things didn’t feel clear at first.
+- Someone I trust suggested this place.
+- I decided to get some proper guidance.
+- I was looking for a clearer way forward.
+- It felt like the right time to get help.
+- I wanted to understand things better.
+- Things were getting a bit difficult.
+- I needed a different perspective.
+- I chose to approach this calmly.
 
-Hotel:
-- Clean room, comfortable bed, helpful staff, convenient spot, quiet stay.
-
-Salon / Spa:
-- Relaxing treatment, neat results, clean place, friendly chat, good hygiene.
-
-Gym:
-- Helpful trainer, good equipment, noticeable progress, motivating setup, consistency help.
-
-Photography / Studio:
-- Quality shots/video, timely delivery, cooperative team, creative ideas, nice editing.
-
-Real Estate:
-- Clear dealing, helpful site visits, smooth legal stuff, good support, fair options.
-
-Education:
-- Clear teaching, good guidance, helpful results, student care, practical tips.
-
-Digital Marketing / AI Digital Marketing:
-- Better online visibility, good ad results, lead growth, social media help, SEO improvements.
-
-Default / Other:
-- Good service, professional team, satisfied outcome, timely help.
-
-Pick 1–2 realistic aspects only – randomize from services, do not cover everything or repeat.
-
---------------------------------------------------
-VARY THESE ELEMENTS EVERY TIME (RANDOMIZE FULLY)
---------------------------------------------------
-Opening variations (pick one randomly, never repeat the same one often; mix structures):
-- Been having some issues with...
-- A colleague told me about...
-- Was looking for a place to handle...
-- Decided to try out something for...
-- Had been dealing with...
-- Felt like I should check on...
-- Came across this spot while...
-- It was getting tough with...
-- Wanted to get some help on...
-- Struggling a bit lately with...
-- Heard good things and went for...
-- Needed to sort out...
-
-Middle (personal touch – vary phrasing):
-- They took time to explain without hurry.
-- Got tips that actually work in daily life.
-- Felt easy talking about it all.
-- The place was clean and welcoming.
-- Noticed changes after following advice.
-- Staff was polite and knew their stuff.
-
-Ending variations (subtle, natural close – randomize):
-- Starting to see improvements.
-- It's helping out quite a bit.
-- Happy I chose this.
-- Feels reliable enough.
-- Might suggest to others.
-- Good local find.
-- Things are better now.
-- Worth checking out.
-- Left feeling positive.
-- Handled well overall.
-
---------------------------------------------------
+---------------------------------------
 BUSINESS NAME RULE
---------------------------------------------------
-Mention {business['name']} EXACTLY ONCE,
-in sentence 2 or 3.
+---------------------------------------
+Mention {business['name']} EXACTLY once,
+in sentence 2 or 3, naturally.
 
 Examples:
-- Visiting {business['name']} helped…
-- Talking things through at {business['name']} made…
-- The experience with {business['name']} felt…
-- I later visited {business['name']} and…
-- Choosing {business['name']} turned out to be helpful
+- Talking to {business['name']} helped…
+- The guidance at {business['name']} felt…
+- Visiting {business['name']} made things clearer…
 
---------------------------------------------------
-CITY PLACEMENT RULE
---------------------------------------------------
-Mention {business['city']} ONCE,
-separate from business name.
+---------------------------------------
+CITY RULE
+---------------------------------------
+Mention {business['city']} EXACTLY once,
+separate from the business name.
 
 Examples:
 - here in {business['city']}
 - around {business['city']}
 - in this part of {business['city']}
 
---------------------------------------------------
-EXAMPLE TONE (for reference only – never copy structures or phrases directly)
---------------------------------------------------
-"Was feeling run down with poor sleep lately. Visited Serenity Clinic and Dr. Mishra listened carefully to what was going on. Gave me some easy changes to try. Slowly getting back on track here in Bhubaneswar. Decent option if you need help."
+---------------------------------------
+ENDING (PICK ONE, KEEP IT SIMPLE)
+---------------------------------------
+- Things feel easier to manage now.
+- I’m feeling more settled now.
+- It helped me think clearly.
+- It’s been steady and helpful.
+- It made a difference for me.
+- I feel more confident now.
+- It worked well for my situation.
+- Glad I went ahead with this.
 
---------------------------------------------------
+---------------------------------------
 FINAL OUTPUT RULE
---------------------------------------------------
-Output ONLY the final review text.
+---------------------------------------
+Return ONLY the final review text.
 No quotes.
 No explanations.
 No formatting.
-No headings.
 """
         try:
             response = model.generate_content(prompt)
