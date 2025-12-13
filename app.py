@@ -189,7 +189,7 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-WRITE A SIMPLE 2–3 SENTENCE INDIAN-ENGLISH REVIEW
+WRITE A SIMPLE 2–3 SENTENCE REVIEW (INDIAN ENGLISH)
 
 BUSINESS DETAILS:
 - Name: {business['name']}
@@ -200,86 +200,96 @@ BUSINESS DETAILS:
 -----------------------------------------
 RULES
 -----------------------------------------
-1. Sentence 1 MUST NOT contain the business name or city.
+1. Do NOT start with the business name or the city.
 2. Mention business name EXACTLY once in sentence 2 or 3.
-3. Mention city EXACTLY once, but NOT next to the business name every time.
-4. Mention category EXACTLY once, but NEVER as "as a psychiatrist" or "psychiatrist in Bhubaneswar".
-   - Instead use natural language such as:
-     "the psychiatrist here", "the support from the doctor", "their psychiatric guidance".
-5. Services must be converted into human experiences:
-   - anxiety → feeling anxious or worried
-   - depression → low mood
-   - sexologist → personal or relationship concerns
-   - addiction → habit issues
-   - neuropsychiatrist → confusion or behaviour concerns
-6. Tone must be simple, everyday, Indian-English.
-7. Use contractions: it's, I'm, he's, didn't, wasn't.
-8. NO dramatic words (wow, amazing, wonderful, honestly).
-9. NO emojis, NO exclamation marks.
-10. NO repeated fixed phrases across reviews.
+3. Mention city EXACTLY once but NEVER directly next to the business name.
+4. Mention category (psychiatrist etc.) once, but vary expression:
+   - "the psychiatrist here"
+   - "their psychiatric guidance"
+   - "the doctor’s support"
+   - "the medical guidance here"
+   Never say "good psychiatrist" every time.
+   Never say "as a psychiatrist".
+5. Convert service names into human experiences:
+   anxiety → feeling anxious or worried
+   depression → low mood
+   addiction → habit issues
+   neuropsychiatrist → behaviour or confusion issues
+6. Use contractions: I’ve, it’s, he’s, I’m, didn’t, wasn’t.
+7. Simple, natural, everyday Indian-English tone.
+8. NO dramatic words: wow, amazing, wonderful, honestly.
+9. NO emojis and NO exclamation marks.
+10. No repetitive patterns across reviews.
 
 -----------------------------------------
-RANDOM TEMPLATES (Choose 1 randomly)
+RANDOM OPENING (CHOOSE ONE)
 -----------------------------------------
-1. "I was dealing with…, and the session helped…"
-2. "I’ve been feeling…, and the guidance made things lighter…"
-3. "I visited for…, and the doctor helped me understand…"
-4. "It felt easy to talk about…, and I started feeling better…"
-5. "A friend suggested this place, and the support helped…"
-6. "I wanted clarity for…, and the consultation made things simpler…"
+Use one randomly:
+- I’ve been dealing with…
+- I was trying to understand…
+- I’ve been feeling a bit low…
+- I was having some trouble with…
+- I’ve been stressed lately…
+- I’ve been feeling quite overwhelmed…
+- I wanted clarity about…
+- I’ve been worried for a while…
+- I felt confused about a few things…
+- I needed some guidance for…
 
 -----------------------------------------
-INSERT BUSINESS DETAILS NATURALLY
+RANDOM MIDDLE STRUCTURE (CHOOSE ONE)
 -----------------------------------------
-Place the business name in sentence 2 or 3 (only once).
-Place the city in a different sentence.
-Place the category in a natural way, e.g.:
-- "the psychiatrist here"
-- "their psychiatric support"
-- "the doctor’s guidance"
-
-Avoid placing name + city + category all in a single chunk.
+- and the session helped me look at things better.
+- and the doctor explained things in a simple way.
+- and the guidance made the situation easier.
+- and the support felt calm and steady.
+- and the doctor helped me understand the reasons behind it.
+- and their psychiatric approach made things clearer.
+- and the conversation felt comfortable.
+- and the guidance was patient and reassuring.
+- and I could talk without feeling judged.
 
 -----------------------------------------
-RANDOM ENDING (Choose ONE)
+BUSINESS INSERTION RULE
 -----------------------------------------
-Use exactly ONE of these endings:
+Place the business name EXACTLY once in sentence 2 or 3, like:
+- "I visited **{business['name']}** later…"
+- "The guidance at **{business['name']}** felt helpful…"
+- "Talking to **{business['name']}** made things clearer…"
 
-It's been helpful support for me.
-I'm feeling a bit more sorted now.
-It gave me some clarity that I needed.
-I'm starting to feel more stable these days.
-I'm seeing a small improvement already.
-It has made things easier to handle.
-I'm feeling more confident now.
-It helped me look at things differently.
-It's been a steady and positive change.
-I'm slowly getting better with their support.
-It felt reassuring to get proper guidance.
-I'm feeling a little lighter now.
-It's been a calm and comfortable experience.
-I'm starting to understand things better.
-It helped me think more clearly.
-I'm feeling more balanced nowadays.
-It's been a decent support system for me.
-I'm feeling hopeful now.
-It made a positive difference for me.
-I'm seeing better days now.
-It helped me manage my thoughts better.
-It's been a practical and steady change.
-I'm beginning to feel more normal again.
-It made things more manageable.
-I'm finally getting some relief.
-It's been comforting talking here.
-I'm feeling more relaxed these days.
-It's been a reliable support for me.
-I'm seeing genuine improvement.
-I'm glad I chose this place.
+-----------------------------------------
+CITY INSERTION RULE
+-----------------------------------------
+City must appear once, but randomly in sentence 2 or 3:
+- "here in {business['city']}"
+- "in this part of {business['city']}"
+- "around {business['city']}"
+NEVER next to business name.
+
+-----------------------------------------
+RANDOM VARIED ENDINGS (CHOOSE ONE)
+-----------------------------------------
+Use exactly one:
+- I’m starting to feel a bit more sorted now.
+- It’s been steady and helpful for me.
+- I’m feeling lighter these days.
+- It gave me some clarity that I needed.
+- I’m slowly getting better with the support.
+- It’s been a comfortable experience for me.
+- I’m feeling more confident now.
+- It helped me think more clearly.
+- I’m beginning to feel more normal again.
+- It’s been reassuring for me.
+- I’m seeing small but positive changes.
+- It made things easier to manage.
+- I’m glad I reached out for help.
+- I’m feeling more settled now.
+- It’s been a reliable support overall.
 
 -----------------------------------------
 OUTPUT FORMAT
 -----------------------------------------
-Output ONLY the completed review text, no bullets, no numbering, no quotes.
+Output ONLY the final 2–3 sentence review without quotes.
 """
         try:
             response = model.generate_content(prompt)
