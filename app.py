@@ -188,103 +188,57 @@ def generate_review_route(slug):
         else:
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
-        ############################################
-        # NEW: Optional Random Service Injection
-        ############################################
-        selected_service = ""
-
-        try:
-            # Parse services into a clean list
-            service_list = [
-                s.strip()
-                for s in services.split(",")
-                if s.strip()
-            ]
-
-            import random
-
-            if service_list:
-                # 50% chance to include a service in the prompt
-                if random.random() < 0.5:
-                    selected_service = random.choice(service_list)
-                else:
-                    selected_service = ""
-        except Exception:
-            selected_service = ""
-
-        # Prepare text to inject into prompt
-        if selected_service:
-            service_text = f"The experience involved {selected_service.lower()}."
-        else:
-            service_text = "The experience was based on the actual service used by the customer."
-
-        # STEP 1 — Create AI opener generator
-        opener_prompt = """
-        Generate ONE natural human sentence starter for a Google review.
-
-        RULES:
-        - Must NOT include business name, city, category or services
-        - Must be 100% random sounding, no repeated patterns
-        - Must feel like a real person starting a story or sharing a feeling
-        - Keep between 5–12 words
-        - No special characters except . and ,
-        - No marketing tone
-        - No perfect grammar required (slight natural errors allowed)
-        - Choose RANDOMLY from one of these styles:
-
-        1. Observation tone
-        2. Feeling-based tone
-        3. Mini-story tone
-        4. Result-based tone
-        5. Comparison tone
-        6. Casual conversational tone
-        7. Experience-start tone
-
-        Output ONLY the opener text. No quotes. No punctuation at the end.
-        """
-
-        try:
-            opener_resp = model.generate_content(opener_prompt)
-            opening_line = opener_resp.text.strip()
-        except:
-            opening_line = "I did not expect such a good experience"
-
-        # STEP 2 — Random placement for business name, city, and category
-        import random
-        placements = [
-            f"{opening_line}. I visited {business['name']} in {business['city']} for their {category} services and",
-            f"{opening_line}. In {business['city']} I found {business['name']} offering great {category} service and",
-            f"{opening_line}. The {category} service at {business['name']} in {business['city']} really",
-            f"{opening_line}. Many people in {business['city']} recommended {business['name']} for {category} and it"
-        ]
-        first_sentence = random.choice(placements)
-
-        # STEP 3 — Build full review prompt
         prompt = f"""
-Write ONE simple and natural Google review in Indian English.
+Write ONE realistic Google Business review for a real customer experience.
 
-FIRST SENTENCE (must continue this naturally):
-{first_sentence}
-
-BUSINESS DETAILS:
+Business Details:
 - Name: {business['name']}
-- City: {business['city']}
 - Category: {category}
+- City: {business['city']}
 - Services: {services}
 
-STRICT RULES:
-- Mention the business name ONLY ONCE in the entire review.
-- Mention the city ONLY ONCE.
-- Mention the category ONLY ONCE.
-- Use simple Indian English that feels like normal day-to-day speaking.
-- Length: 2–3 short sentences.
-- No dramatic tone, no slang, no wow, no honestly.
-- Must mention ONE real benefit or experience.
-- End with a simple natural recommendation.
-- NO special characters except . and ,
-- Do NOT repeat the business name at the end.
+CRITICAL RULES:
+- Generate ONLY ONE review.
+- Length must be exactly 2–3 natural sentences.
+- Must sound 100% human and personal.
+- Must NOT sound like an advertisement.
+- Must NOT follow a fixed structure.
+- Must NOT look patterned or repeated.
 
-Output ONLY the final review text with NO quotes.
+RANDOM PLACEMENT RULE (VERY IMPORTANT):
+- The business name, city, and category MUST appear naturally,
+  but their position must be RANDOM:
+  • Sometimes at the beginning,
+  • Sometimes in the middle,
+  • Sometimes at the end.
+- Never always start with the business name.
+
+CATEGORY UNDERSTANDING:
+- The review must clearly reflect real services from this category: {services}
+- Mention ONE real experience or outcome naturally.
+
+SEARCH BEHAVIOR OPTIMIZATION:
+- The wording should naturally support how people search on Google like:
+  • "{category} in {business['city']}"
+  • "best {category} near me"
+  • "top {category} in {business['city']}"
+
+MANDATORY:
+- Must include ALL THREE somewhere:
+  • {business['name']}
+  • {business['city']}
+  • {category}
+- Mention ONE real benefit (leads, visibility, service quality, hygiene, results, etc.)
+- End with a natural strong recommendation (not forced).
+
+STYLE:
+- Truly human
+- Warm and meaningful
+- No keyword stuffing
+- No robotic tone
+- No repeated phrasing patterns
+
+Output ONLY the review text. No quotes. No explanation.
 """
         try:
             response = model.generate_content(prompt)
