@@ -188,67 +188,92 @@ def generate_review_route(slug):
         else:
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
-        # Generate random services to highlight (0-2)
-        try:
-            service_list = [s.strip() for s in services.split(",") if s.strip()]
-            import random
-            num_services = random.randint(0, 2)
-            if service_list and num_services > 0:
-                selected_services = random.sample(service_list, min(num_services, len(service_list)))
-                services_text = ", ".join(selected_services)
-            else:
-                services_text = ""
-        except:
-            services_text = ""
-
-        # Generate random first sentence opener
-        placements = [
-            f"I recently had a visit to {business['name']} in {business['city']} for their {category} services and",
-            f"In {business['city']} I found {business['name']} offering great {category} service and",
-            f"The {category} service at {business['name']} in {business['city']} really",
-            f"Many people in {business['city']} recommended {business['name']} for {category} and it"
-        ]
-        first_sentence = random.choice(placements)
-
         prompt = f"""
-Write ONE simple and natural Google Business review in Indian English.
+Write ONE simple, natural, human Google review in Indian English.
+Do NOT write more than one review.
 
-CONTEXT:
-- Business Name: {business['name']}
+BUSINESS DETAILS:
+- Name: {business['name']}
 - City: {business['city']}
 - Category: {category}
-- Full Services List: {services}
-- Random Highlighted Services (0–2): {services_text}
+- Services: {services}
 
-REVIEW REQUIREMENTS:
-1. The review must be exactly 2–3 short sentences.
-2. Use simple Indian English that feels natural and spoken.
-3. Use correct spelling and basic grammar.
-4. Use natural contractions like he's, she's, it's, I'm, they're where appropriate.
-5. STRICT: Mention the business name once only.
-6. STRICT: Mention the city once only.
-7. STRICT: Mention the category once only.
-8. Include highlighted services in a natural way (not listed, not forced).
-9. Continue the opener naturally:
-   "{first_sentence}"
-10. Keep tone human, warm, and genuine. No dramatic expressions.
-11. Mention ONE real benefit or outcome (comfort, clarity, quality, hygiene, taste, improvement, polite staff, etc.).
-12. End with a simple, natural recommendation.
-13. No emojis. No special characters except . , and apostrophes used in contractions.
+-----------------------------------------------
+STRICT RULES
+-----------------------------------------------
+1. Review length must be 2–3 sentences (random).
+2. MUST sound like a normal Indian person speaking.
+3. MUST NOT sound like marketing or AI.
+4. MUST NOT follow any fixed pattern.
+5. MUST NOT start with business name.
+6. Mention the business name ONLY ONCE.
+7. Mention the city ONLY ONCE.
+8. Mention the category ONLY ONCE.
+9. No dramatic words like wow, honestly, amazing, wonderful etc.
+10. No repeated sentence structures.
+11. No complex English—keep it simple and everyday style.
+12. Use natural contractions like he’s, it’s, I’m where appropriate.
+13. Use only these punctuation marks: . and ,
+14. No emojis or special symbols.
 
-RANDOMIZATION RULES:
-- Insert business name, city, and category in random sentence positions.
-- Insert services in random but natural locations (beginning, middle, or end).
+-----------------------------------------------
+SERVICE INTELLIGENCE RULE
+-----------------------------------------------
+• Use 0, 1, or 2 services RANDOMLY in the review.
+• Convert service names into natural human experience forms.
 
-SEO BEHAVIOUR:
-- Should naturally support search patterns like:
-  "{category} in {business['city']}"
-  "best {category} near me"
-  "good {services_text} service in {business['city']}"
+For example:
+Psychiatrist → talking about stress, mood, anxiety
+Neuropsychiatrist → help understanding behaviour or confusion
+Sexologist → guidance for personal or relationship concerns
+Drug De-addiction → support for recovery or habits
+Restaurant → taste, service, food quality, ambience
+Salon → haircut, styling, staff, hygiene
+Gym → training, equipment, guidance
+Hotel → stay, comfort, staff behaviour
 
-FINAL OUTPUT:
-- Output ONLY the final review text.
-- No quotes, no explanation, no formatting.
+If services exist, USE them naturally, NOT as title labels.
+
+-----------------------------------------------
+RANDOM PLACEMENT RULE (VERY IMPORTANT)
+-----------------------------------------------
+Insert business name, city, category in different positions every time:
+• Sometimes early,
+• Sometimes after a comma,
+• Sometimes in sentence 2,
+• Sometimes at the end,
+• Sometimes embedded inside another phrase.
+
+NEVER start the review with the business name.
+
+-----------------------------------------------
+RANDOM STRUCTURE TEMPLATES (CHOOSE ONE RANDOMLY)
+-----------------------------------------------
+Use ANY one of these review styles randomly:
+
+1. Feeling-first → "I was dealing with … and the session really helped …"
+2. Friend recommendation → "A friend suggested this place …"
+3. Outcome-first → "I felt lighter after the meeting …"
+4. Environment-first → "The place felt calm …"
+5. Staff-first → "The staff here was polite …"
+6. Problem-solution → "I went with a concern and …"
+7. Experience summary → "The overall experience was good …"
+8. Improvement-based → "There’s been a clear change in how I feel …"
+9. Comfort-based → "It was easy to talk here …"
+10. Guidance-based → "The explanation was simple and clear …"
+11. Support-based → "Got the support I needed …"
+12. Visit reason → "Went here after someone recommended …"
+13. First-time experience → "This was my first time visiting …"
+14. Personal tone → "I felt heard during the session …"
+15. Result-based → "The session helped me understand things better …"
+
+-----------------------------------------------
+FINAL INSTRUCTIONS
+-----------------------------------------------
+• Combine everything naturally.
+• Output ONLY the final review text.
+• No quotes.
+• No explanations.
 """
         try:
             response = model.generate_content(prompt)
