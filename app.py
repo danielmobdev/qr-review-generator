@@ -189,7 +189,7 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-Write ONE short, natural Google review in simple Indian English.
+Write ONE simple, natural, 2–3 sentence Indian-English Google review.
 
 BUSINESS DETAILS:
 - Name: {business['name']}
@@ -197,103 +197,126 @@ BUSINESS DETAILS:
 - Category: {category}
 - Services: {services}
 
----------------------------------------------------
-STRICT WRITING RULES
----------------------------------------------------
+---------------------------------------------
+HARD RULES (MUST FOLLOW)
+---------------------------------------------
 1. Write ONLY 2–3 short sentences.
-2. MUST sound like a real Indian customer talking casually.
-3. NEVER start with the business name.
-4. Mention business name EXACTLY once.
-5. Mention city EXACTLY once.
-6. Mention category EXACTLY once.
-7. Use natural contractions: he's, I'm, it's, they're.
-8. Use ONLY commas and full stops.
-9. No dramatic words: amazing, awesome, wonderful, truly, honestly, superb.
-10. No emojis, no exclamation marks.
-11. No repeated endings like "he's a good psychiatrist" or similar phrasing.
+2. NEVER start with the business name.
+3. Mention the business name EXACTLY once.
+4. Mention the city EXACTLY once.
+5. Mention the category EXACTLY once.
+6. Keep the tone simple, natural, and conversational.
+7. Use human contractions: it's, I'm, he's, didn't, wasn't.
+8. NO dramatic words: no wow, amazing, wonderful, honestly, truly, absolutely.
+9. NO emojis, NO exclamation marks.
+10. NO repeated patterns across reviews.
 
----------------------------------------------------
-SERVICE → SYMPTOM CONVERSION LOGIC
----------------------------------------------------
-Look at services and pick 1–2 items randomly.
-Convert them into NATURAL human feelings, NOT job titles.
+---------------------------------------------
+SERVICE → HUMAN EXPERIENCE MAPPING
+---------------------------------------------
+Take 1–2 random services from the services list and convert them into simple human problems:
 
 Examples:
-- psychiatrist → stress, anxiety, mood issues
-- neuropsychiatrist → confusion, overthinking, behaviour issues
-- sexologist → personal or relationship concerns
-- drug deaddiction → habit problems, dependency issues
-- sleep problem → trouble sleeping
-- depression → low mood
-- schizophrenia → hearing things, confusion
+- "anxiety" → "feeling anxious or worried"
+- "depression" → "low mood"
+- "neuropsychiatrist" → "confusion or behaviour issues"
+- "sexologist" → "personal or relationship concerns"
+- "addiction" → "habit issues"
+- "sleep problem" → "trouble sleeping"
 
-DO NOT use service names as titles.
-Use them as experiences.
+Never use job titles as services inside the review.
+Convert everything into real human feelings or experiences.
 
----------------------------------------------------
-RANDOM STRUCTURE (CHOOSE ANY ONE)
----------------------------------------------------
-Choose ONE style randomly for each output:
+---------------------------------------------
+STRUCTURE TEMPLATES (Pick 1 randomly)
+---------------------------------------------
+Gemini must RANDOMLY choose one of these:
 
 1. Feeling-first:
    "I was dealing with…, and the session helped…"
 
-2. Visit-first:
-   "Went here recently for…, and…"
+2. Comfort-first:
+   "It felt easy to talk about…, and…"
 
-3. Outcome-first:
+3. Improvement-first:
+   "I've noticed a small change after…"
+
+4. Outcome-first:
    "Talking here helped me understand…"
 
-4. Change-first:
-   "I’ve noticed a clear improvement…"
+5. Support-first:
+   "I went here for…, and the guidance helped…"
 
-5. Comfort-first:
-   "It felt easy to talk about things here…"
+6. Visit-first:
+   "I visited recently for…, and…"
 
-6. Suggestion-first:
-   "Someone suggested I try this place, and…"
+7. Suggestion-first:
+   "A friend suggested I try this place, and…"
 
-7. Support-first:
-   "The way things were explained made it simpler…"
+Every review must start DIFFERENTLY.
 
----------------------------------------------------
-PLACEMENT RULE (IMPORTANT)
----------------------------------------------------
-Place:
-- business name
-- city
-- category
-all in **different positions**, not in the same sentence.
+---------------------------------------------
+RANDOM ENDING SYSTEM (Use one from this list)
+---------------------------------------------
+Use EXACTLY one item from this ENDINGS array:
 
-Example of correct placement:
-Sentence 1: mentions city
-Sentence 2: mentions business name
-Sentence 3: mentions category
+ENDINGS = [
+    "It's been helpful support for me.",
+    "I'm feeling a bit more sorted now.",
+    "It gave me some clarity that I needed.",
+    "I'm starting to feel more stable these days.",
+    "It turned out to be a useful experience.",
+    "I'm seeing a small improvement already.",
+    "It has made things easier to handle.",
+    "I'm feeling more confident now.",
+    "It helped me look at things differently.",
+    "It's been a steady and positive change.",
+    "I'm slowly getting better with their support.",
+    "It felt reassuring to get proper guidance.",
+    "I'm feeling a little lighter now.",
+    "It's been a calm and comfortable experience.",
+    "I'm starting to understand things better.",
+    "It helped me think more clearly.",
+    "It was the support I was looking for.",
+    "I'm feeling more balanced nowadays.",
+    "It helped me handle things better.",
+    "It's been a decent support system for me.",
+    "I'm feeling hopeful now.",
+    "I'm getting better clarity these days.",
+    "It made a positive difference for me.",
+    "The session helped me settle down a bit.",
+    "It's been reassuring so far.",
+    "I'm slowly improving with their help.",
+    "It made me feel understood.",
+    "It's been good for my peace of mind.",
+    "I'm seeing better days now.",
+    "It helped me put things in the right place.",
+    "The experience felt simple and supportive.",
+    "It's been useful for my overall wellbeing.",
+    "I'm feeling less stressed now.",
+    "It helped me manage my thoughts better.",
+    "It's been a practical and steady change.",
+    "I'm beginning to feel more normal again.",
+    "It gave me the push I needed.",
+    "It made things more manageable.",
+    "I'm finally getting some relief.",
+    "It's been comforting talking here.",
+    "I'm feeling more relaxed these days.",
+    "It was exactly the kind of help I needed.",
+    "It's been a reliable support for me.",
+    "I'm seeing genuine improvement.",
+    "It helped me settle my thoughts.",
+    "I'm feeling more positive now.",
+    "It has been a meaningful experience.",
+    "I'm glad I chose this place.",
+    "It helped me move in the right direction."
+]
 
----------------------------------------------------
-ENDING STYLE (RANDOM MIX)
----------------------------------------------------
-Choose ANY ending randomly from this list (or rewrite naturally):
-
-1. I feel better after the visit.
-2. It’s been a helpful experience overall.
-3. I’m seeing slow but steady improvement.
-4. I felt comfortable throughout.
-5. Things make more sense now.
-6. I’d suggest this place if you’re facing similar issues.
-7. I don’t feel as stressed now.
-8. I’m glad I decided to visit.
-9. It’s been good support for me.
-10. I’d recommend giving it a try.
-11. I feel more confident handling things now.
-12. Happy with the support I received.
-
-DO NOT end repeatedly with "he's a good psychiatrist" or similar patterns.
-
----------------------------------------------------
-FINAL OUTPUT RULE
----------------------------------------------------
-Output ONLY the final review. No quotes. No extra text.
+---------------------------------------------
+FINAL OUTPUT
+---------------------------------------------
+Gemini must output ONLY the final review text.
+No headings, no numbering, no quotes.
 """
         try:
             response = model.generate_content(prompt)
