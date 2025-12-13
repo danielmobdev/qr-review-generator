@@ -189,7 +189,7 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-Write ONE simple, natural, 2–3 sentence Indian-English Google review.
+WRITE A SIMPLE 2–3 SENTENCE INDIAN-ENGLISH REVIEW
 
 BUSINESS DETAILS:
 - Name: {business['name']}
@@ -197,126 +197,89 @@ BUSINESS DETAILS:
 - Category: {category}
 - Services: {services}
 
----------------------------------------------
-HARD RULES (MUST FOLLOW)
----------------------------------------------
-1. Write ONLY 2–3 short sentences.
-2. NEVER start with the business name.
-3. Mention the business name EXACTLY once.
-4. Mention the city EXACTLY once.
-5. Mention the category EXACTLY once.
-6. Keep the tone simple, natural, and conversational.
-7. Use human contractions: it's, I'm, he's, didn't, wasn't.
-8. NO dramatic words: no wow, amazing, wonderful, honestly, truly, absolutely.
+-----------------------------------------
+RULES
+-----------------------------------------
+1. Sentence 1 MUST NOT contain the business name or city.
+2. Mention business name EXACTLY once in sentence 2 or 3.
+3. Mention city EXACTLY once, but NOT next to the business name every time.
+4. Mention category EXACTLY once, but NEVER as "as a psychiatrist" or "psychiatrist in Bhubaneswar".
+   - Instead use natural language such as:
+     "the psychiatrist here", "the support from the doctor", "their psychiatric guidance".
+5. Services must be converted into human experiences:
+   - anxiety → feeling anxious or worried
+   - depression → low mood
+   - sexologist → personal or relationship concerns
+   - addiction → habit issues
+   - neuropsychiatrist → confusion or behaviour concerns
+6. Tone must be simple, everyday, Indian-English.
+7. Use contractions: it's, I'm, he's, didn't, wasn't.
+8. NO dramatic words (wow, amazing, wonderful, honestly).
 9. NO emojis, NO exclamation marks.
-10. NO repeated patterns across reviews.
+10. NO repeated fixed phrases across reviews.
 
----------------------------------------------
-SERVICE → HUMAN EXPERIENCE MAPPING
----------------------------------------------
-Take 1–2 random services from the services list and convert them into simple human problems:
+-----------------------------------------
+RANDOM TEMPLATES (Choose 1 randomly)
+-----------------------------------------
+1. "I was dealing with…, and the session helped…"
+2. "I’ve been feeling…, and the guidance made things lighter…"
+3. "I visited for…, and the doctor helped me understand…"
+4. "It felt easy to talk about…, and I started feeling better…"
+5. "A friend suggested this place, and the support helped…"
+6. "I wanted clarity for…, and the consultation made things simpler…"
 
-Examples:
-- "anxiety" → "feeling anxious or worried"
-- "depression" → "low mood"
-- "neuropsychiatrist" → "confusion or behaviour issues"
-- "sexologist" → "personal or relationship concerns"
-- "addiction" → "habit issues"
-- "sleep problem" → "trouble sleeping"
+-----------------------------------------
+INSERT BUSINESS DETAILS NATURALLY
+-----------------------------------------
+Place the business name in sentence 2 or 3 (only once).
+Place the city in a different sentence.
+Place the category in a natural way, e.g.:
+- "the psychiatrist here"
+- "their psychiatric support"
+- "the doctor’s guidance"
 
-Never use job titles as services inside the review.
-Convert everything into real human feelings or experiences.
+Avoid placing name + city + category all in a single chunk.
 
----------------------------------------------
-STRUCTURE TEMPLATES (Pick 1 randomly)
----------------------------------------------
-Gemini must RANDOMLY choose one of these:
+-----------------------------------------
+RANDOM ENDING (Choose ONE)
+-----------------------------------------
+Use exactly ONE of these endings:
 
-1. Feeling-first:
-   "I was dealing with…, and the session helped…"
+It's been helpful support for me.
+I'm feeling a bit more sorted now.
+It gave me some clarity that I needed.
+I'm starting to feel more stable these days.
+I'm seeing a small improvement already.
+It has made things easier to handle.
+I'm feeling more confident now.
+It helped me look at things differently.
+It's been a steady and positive change.
+I'm slowly getting better with their support.
+It felt reassuring to get proper guidance.
+I'm feeling a little lighter now.
+It's been a calm and comfortable experience.
+I'm starting to understand things better.
+It helped me think more clearly.
+I'm feeling more balanced nowadays.
+It's been a decent support system for me.
+I'm feeling hopeful now.
+It made a positive difference for me.
+I'm seeing better days now.
+It helped me manage my thoughts better.
+It's been a practical and steady change.
+I'm beginning to feel more normal again.
+It made things more manageable.
+I'm finally getting some relief.
+It's been comforting talking here.
+I'm feeling more relaxed these days.
+It's been a reliable support for me.
+I'm seeing genuine improvement.
+I'm glad I chose this place.
 
-2. Comfort-first:
-   "It felt easy to talk about…, and…"
-
-3. Improvement-first:
-   "I've noticed a small change after…"
-
-4. Outcome-first:
-   "Talking here helped me understand…"
-
-5. Support-first:
-   "I went here for…, and the guidance helped…"
-
-6. Visit-first:
-   "I visited recently for…, and…"
-
-7. Suggestion-first:
-   "A friend suggested I try this place, and…"
-
-Every review must start DIFFERENTLY.
-
----------------------------------------------
-RANDOM ENDING SYSTEM (Use one from this list)
----------------------------------------------
-Use EXACTLY one item from this ENDINGS array:
-
-ENDINGS = [
-    "It's been helpful support for me.",
-    "I'm feeling a bit more sorted now.",
-    "It gave me some clarity that I needed.",
-    "I'm starting to feel more stable these days.",
-    "It turned out to be a useful experience.",
-    "I'm seeing a small improvement already.",
-    "It has made things easier to handle.",
-    "I'm feeling more confident now.",
-    "It helped me look at things differently.",
-    "It's been a steady and positive change.",
-    "I'm slowly getting better with their support.",
-    "It felt reassuring to get proper guidance.",
-    "I'm feeling a little lighter now.",
-    "It's been a calm and comfortable experience.",
-    "I'm starting to understand things better.",
-    "It helped me think more clearly.",
-    "It was the support I was looking for.",
-    "I'm feeling more balanced nowadays.",
-    "It helped me handle things better.",
-    "It's been a decent support system for me.",
-    "I'm feeling hopeful now.",
-    "I'm getting better clarity these days.",
-    "It made a positive difference for me.",
-    "The session helped me settle down a bit.",
-    "It's been reassuring so far.",
-    "I'm slowly improving with their help.",
-    "It made me feel understood.",
-    "It's been good for my peace of mind.",
-    "I'm seeing better days now.",
-    "It helped me put things in the right place.",
-    "The experience felt simple and supportive.",
-    "It's been useful for my overall wellbeing.",
-    "I'm feeling less stressed now.",
-    "It helped me manage my thoughts better.",
-    "It's been a practical and steady change.",
-    "I'm beginning to feel more normal again.",
-    "It gave me the push I needed.",
-    "It made things more manageable.",
-    "I'm finally getting some relief.",
-    "It's been comforting talking here.",
-    "I'm feeling more relaxed these days.",
-    "It was exactly the kind of help I needed.",
-    "It's been a reliable support for me.",
-    "I'm seeing genuine improvement.",
-    "It helped me settle my thoughts.",
-    "I'm feeling more positive now.",
-    "It has been a meaningful experience.",
-    "I'm glad I chose this place.",
-    "It helped me move in the right direction."
-]
-
----------------------------------------------
-FINAL OUTPUT
----------------------------------------------
-Gemini must output ONLY the final review text.
-No headings, no numbering, no quotes.
+-----------------------------------------
+OUTPUT FORMAT
+-----------------------------------------
+Output ONLY the completed review text, no bullets, no numbering, no quotes.
 """
         try:
             response = model.generate_content(prompt)
