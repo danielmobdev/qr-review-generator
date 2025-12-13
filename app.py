@@ -189,56 +189,47 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-Write ONE realistic Google Business review for a real customer experience.
+Write ONE simple and natural Google review in Indian English.
 
-Business Details:
+BUSINESS INFO:
 - Name: {business['name']}
-- Category: {category}
 - City: {business['city']}
+- Category: {category}
 - Services: {services}
 
-CRITICAL RULES:
-- Generate ONLY ONE review.
-- Length must be exactly 2–3 natural sentences.
-- Must sound 100% human and personal.
-- Must NOT sound like an advertisement.
-- Must NOT follow a fixed structure.
-- Must NOT look patterned or repeated.
+REVIEW REQUIREMENTS:
+1. Length must be 2 or 3 short sentences chosen randomly.
+2. Must sound like a real Indian person casually sharing an experience.
+3. Use simple day-to-day English (no dramatic tone, no wow, no honestly).
+4. Mention the business name ONLY once in the whole review.
+5. Mention the city ONLY once.
+6. Mention the category ONLY once.
+7. Randomly include zero, one, or two services from this list:
+   {services}
+8. If a service is used, place it randomly at the start, middle, or end.
+9. Describe ONE benefit, feeling, or outcome clearly.
+10. End with a simple natural recommendation.
+11. No special characters except . and ,
+12. No emojis, no !, no ?, no quotes.
+13. Do NOT repeat ideas or start patterns.
+14. The first sentence must begin with a random natural opener such as:
+   - I recently had a visit
+   - My experience was quite good
+   - I came across this place
+   - A friend told me about this
+   - I tried their service recently
+   - I had a decent experience
+   - I felt comfortable with the service
+   - I appreciated the way things were handled
+   (Gemini should choose one randomly, not list them)
 
-RANDOM PLACEMENT RULE (VERY IMPORTANT):
-- The business name, city, and category MUST appear naturally,
-  but their position must be RANDOM:
-  • Sometimes at the beginning,
-  • Sometimes in the middle,
-  • Sometimes at the end.
-- Never always start with the business name.
+STRUCTURE & SEO RULES:
+- The business name, city, and category must appear naturally but NOT at the start every time.
+- Their placement must be random across the sentences.
+- The tone must match typical Google review language from Indian users.
+- Include natural search-friendly wording without looking like SEO.
 
-CATEGORY UNDERSTANDING:
-- The review must clearly reflect real services from this category: {services}
-- Mention ONE real experience or outcome naturally.
-
-SEARCH BEHAVIOR OPTIMIZATION:
-- The wording should naturally support how people search on Google like:
-  • "{category} in {business['city']}"
-  • "best {category} near me"
-  • "top {category} in {business['city']}"
-
-MANDATORY:
-- Must include ALL THREE somewhere:
-  • {business['name']}
-  • {business['city']}
-  • {category}
-- Mention ONE real benefit (leads, visibility, service quality, hygiene, results, etc.)
-- End with a natural strong recommendation (not forced).
-
-STYLE:
-- Truly human
-- Warm and meaningful
-- No keyword stuffing
-- No robotic tone
-- No repeated phrasing patterns
-
-Output ONLY the review text. No quotes. No explanation.
+Output ONLY the final review text with no quotes, no explanation.
 """
         try:
             response = model.generate_content(prompt)
