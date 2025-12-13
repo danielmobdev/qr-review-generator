@@ -188,48 +188,67 @@ def generate_review_route(slug):
         else:
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
-        prompt = f"""
-Write ONE simple and natural Google review in Indian English.
+        # Generate random services to highlight (0-2)
+        try:
+            service_list = [s.strip() for s in services.split(",") if s.strip()]
+            import random
+            num_services = random.randint(0, 2)
+            if service_list and num_services > 0:
+                selected_services = random.sample(service_list, min(num_services, len(service_list)))
+                services_text = ", ".join(selected_services)
+            else:
+                services_text = ""
+        except:
+            services_text = ""
 
-BUSINESS INFO:
-- Name: {business['name']}
+        # Generate random first sentence opener
+        placements = [
+            f"I recently had a visit to {business['name']} in {business['city']} for their {category} services and",
+            f"In {business['city']} I found {business['name']} offering great {category} service and",
+            f"The {category} service at {business['name']} in {business['city']} really",
+            f"Many people in {business['city']} recommended {business['name']} for {category} and it"
+        ]
+        first_sentence = random.choice(placements)
+
+        prompt = f"""
+Write ONE simple and natural Google Business review in Indian English.
+
+CONTEXT:
+- Business Name: {business['name']}
 - City: {business['city']}
 - Category: {category}
-- Services: {services}
+- Services List: {services}
+- Random Selected Services To Highlight (0–2): {services_text}
 
-REVIEW REQUIREMENTS:
-1. Length must be 2 or 3 short sentences chosen randomly.
-2. Must sound like a real Indian person casually sharing an experience.
-3. Use simple day-to-day English (no dramatic tone, no wow, no honestly).
-4. Mention the business name ONLY once in the whole review.
-5. Mention the city ONLY once.
-6. Mention the category ONLY once.
-7. Randomly include zero, one, or two services from this list:
-   {services}
-8. If a service is used, place it randomly at the start, middle, or end.
-9. Describe ONE benefit, feeling, or outcome clearly.
-10. End with a simple natural recommendation.
-11. No special characters except . and ,
-12. No emojis, no !, no ?, no quotes.
-13. Do NOT repeat ideas or start patterns.
-14. The first sentence must begin with a random natural opener such as:
-   - I recently had a visit
-   - My experience was quite good
-   - I came across this place
-   - A friend told me about this
-   - I tried their service recently
-   - I had a decent experience
-   - I felt comfortable with the service
-   - I appreciated the way things were handled
-   (Gemini should choose one randomly, not list them)
+IMPORTANT RULES:
+1. The review must be 2–3 short sentences only.
+2. Use simple Indian English — normal day-to-day speaking style.
+3. STRICT — Mention business name ONCE only.
+4. STRICT — Mention city ONCE only.
+5. STRICT — Mention category ONCE only.
+6. Include the selected service(s) naturally. Do NOT list them — weave into the sentence.
+7. Start the review by CONTINUING this opener naturally:
+   "{first_sentence}"
+8. No words like "Honestly", "I gotta say", "I wasn't expecting", "wow", "amazing".
+9. Review should sound like a real customer sharing a normal experience.
+10. Must include ONE genuine benefit or outcome (comfort, clarity, quality, improvement, hygiene, good taste, smooth service, helpful staff).
+11. End with a simple, human recommendation — not dramatic.
+12. No emojis. No special characters except . and ,
 
-STRUCTURE & SEO RULES:
-- The business name, city, and category must appear naturally but NOT at the start every time.
-- Their placement must be random across the sentences.
-- The tone must match typical Google review language from Indian users.
-- Include natural search-friendly wording without looking like SEO.
+RANDOMIZATION RULES:
+- The highlighted service(s) must appear in a RANDOM part of the review
+  (beginning/middle/end).
+- Business name, city, and category should be placed randomly, NOT always
+  at the beginning.
 
-Output ONLY the final review text with no quotes, no explanation.
+SEO BEHAVIOR:
+- The text should indirectly support search patterns like:
+  "{category} in {business['city']}"
+  "best {category} near me"
+  "good {services_text} service in {business['city']}"
+
+FINAL INSTRUCTION:
+Output ONLY the final review text. No quotes. No explanation. No formatting.
 """
         try:
             response = model.generate_content(prompt)
