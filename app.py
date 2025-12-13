@@ -189,8 +189,7 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-Write ONE simple, natural, human Google review in Indian English.
-Do NOT write more than one review.
+Write ONE simple and natural Google review in Indian English.
 
 BUSINESS DETAILS:
 - Name: {business['name']}
@@ -198,82 +197,60 @@ BUSINESS DETAILS:
 - Category: {category}
 - Services: {services}
 
------------------------------------------------
-STRICT RULES
------------------------------------------------
-1. Review length must be 2–3 sentences (random).
-2. MUST sound like a normal Indian person speaking.
-3. MUST NOT sound like marketing or AI.
-4. MUST NOT follow any fixed pattern.
-5. MUST NOT start with business name.
-6. Mention the business name ONLY ONCE.
-7. Mention the city ONLY ONCE.
-8. Mention the category ONLY ONCE.
-9. No dramatic words like wow, honestly, amazing, wonderful etc.
-10. No repeated sentence structures.
-11. No complex English—keep it simple and everyday style.
-12. Use natural contractions like he’s, it’s, I’m where appropriate.
-13. Use only these punctuation marks: . and ,
-14. No emojis or special symbols.
+-----------------------------------------
+STRICT WRITING RULES
+-----------------------------------------
+1. Write ONLY 2–3 short sentences.
+2. Must sound 100% like a normal Indian person.
+3. Do NOT start with the business name.
+4. Mention business name EXACTLY once.
+5. Mention city EXACTLY once.
+6. Mention category EXACTLY once.
+7. Use simple words; no dramatic tone.
+8. Use everyday natural contractions like he's, it's, I'm.
+9. Use ONLY full stops and commas, no other punctuation.
+10. No wow, amazing, honestly, wonderful, etc.
 
------------------------------------------------
-SERVICE INTELLIGENCE RULE
------------------------------------------------
-• Use 0, 1, or 2 services RANDOMLY in the review.
-• Convert service names into natural human experience forms.
+-----------------------------------------
+SERVICE & SYMPTOM LOGIC
+-----------------------------------------
+Choose 1 or 2 items randomly from the services list and convert them into natural human problems, experiences or improvements.
 
-For example:
-Psychiatrist → talking about stress, mood, anxiety
-Neuropsychiatrist → help understanding behaviour or confusion
-Sexologist → guidance for personal or relationship concerns
-Drug De-addiction → support for recovery or habits
-Restaurant → taste, service, food quality, ambience
-Salon → haircut, styling, staff, hygiene
-Gym → training, equipment, guidance
-Hotel → stay, comfort, staff behaviour
+Examples (for psychiatrists):
+- anxiety → feeling anxious or worried
+- depression → low mood
+- neuropsychiatrist → confusion or behaviour issues
+- sexologist → personal or relationship concerns
+- addiction → habit or dependency issues
+- sleep problem → trouble sleeping
+- schizophrenia → hearing things, overthinking, confusion
 
-If services exist, USE them naturally, NOT as title labels.
+Do NOT use service names as job titles.  
+Use them as experiences the customer had.
 
------------------------------------------------
-RANDOM PLACEMENT RULE (VERY IMPORTANT)
------------------------------------------------
-Insert business name, city, category in different positions every time:
-• Sometimes early,
-• Sometimes after a comma,
-• Sometimes in sentence 2,
-• Sometimes at the end,
-• Sometimes embedded inside another phrase.
+-----------------------------------------
+RANDOM STRUCTURE (CHOOSE ONE STYLE)
+-----------------------------------------
+Pick any 1 structure randomly:
 
-NEVER start the review with the business name.
+1. Feeling-first: "I was dealing with…, and the session helped…"
+2. Recommendation-first: "Someone suggested this place, and…"
+3. Improvement-first: "I've noticed a clear change after…"
+4. Comfort-first: "It felt easy to talk here…"
+5. Outcome-first: "Talking here helped me understand…"
+6. Visit-first: "Went here last week for…, and…"
+7. Experience-first: "The doctor explained everything clearly…"
 
------------------------------------------------
-RANDOM STRUCTURE TEMPLATES (CHOOSE ONE RANDOMLY)
------------------------------------------------
-Use ANY one of these review styles randomly:
+-----------------------------------------
+PLACEMENT RULE
+-----------------------------------------
+Place business name, city AND category in DIFFERENT parts of the review every time.  
+NEVER at the start of sentence 1.
 
-1. Feeling-first → "I was dealing with … and the session really helped …"
-2. Friend recommendation → "A friend suggested this place …"
-3. Outcome-first → "I felt lighter after the meeting …"
-4. Environment-first → "The place felt calm …"
-5. Staff-first → "The staff here was polite …"
-6. Problem-solution → "I went with a concern and …"
-7. Experience summary → "The overall experience was good …"
-8. Improvement-based → "There’s been a clear change in how I feel …"
-9. Comfort-based → "It was easy to talk here …"
-10. Guidance-based → "The explanation was simple and clear …"
-11. Support-based → "Got the support I needed …"
-12. Visit reason → "Went here after someone recommended …"
-13. First-time experience → "This was my first time visiting …"
-14. Personal tone → "I felt heard during the session …"
-15. Result-based → "The session helped me understand things better …"
-
------------------------------------------------
-FINAL INSTRUCTIONS
------------------------------------------------
-• Combine everything naturally.
-• Output ONLY the final review text.
-• No quotes.
-• No explanations.
+-----------------------------------------
+FINAL OUTPUT RULE
+-----------------------------------------
+Output ONLY the final review text with NO quotes.
 """
         try:
             response = model.generate_content(prompt)
