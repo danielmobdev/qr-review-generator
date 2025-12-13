@@ -191,7 +191,7 @@ def generate_review_route(slug):
         prompt = f"""
 You are generating ONE Google Business review.
 This must look like a genuine review written by a real Indian customer.
-The review MUST NOT look templated or repetitive.
+The review MUST NOT look templated or repetitive. Vary language, structure, and details heavily to mimic natural human variation.
 
 BUSINESS DETAILS:
 - Name: {business['name']}
@@ -202,123 +202,120 @@ BUSINESS DETAILS:
 --------------------------------------------------
 GLOBAL RULES (STRICT)
 --------------------------------------------------
-1. Write ONLY 2–3 short sentences.
-2. Simple, natural Indian English.
+1. Write ONLY 2–4 short sentences for natural flow.
+2. Use simple, everyday Indian English with occasional local flavor (e.g., slight informal phrasing like 'a bit' or 'quite').
 3. Do NOT start with the business name or city.
-4. Mention the business name EXACTLY once.
-5. Mention the city EXACTLY once.
-6. Mention the category indirectly (never repeat the same phrase).
-7. Convert services into REAL HUMAN EXPERIENCES.
-8. Grammar must be clean and easy to understand.
-9. No emojis, no exclamation marks.
-10. No dramatic words like wow, amazing, honestly.
-11. Reviews must feel different every time.
+4. Mention the business name EXACTLY once, integrated smoothly.
+5. Mention the city EXACTLY once, woven naturally (e.g., 'in Bhubaneswar area').
+6. Reference the category subtly through context, never directly.
+7. Transform services into PERSONAL, RELATABLE EXPERIENCES (e.g., instead of 'consultation', say 'had a good chat about my concerns').
+8. Grammar should be clean but imperfect – like real speech (e.g., minor contractions).
+9. No emojis, no exclamation marks, no hashtags.
+10. Avoid hype words like wow, amazing, fantastic, best ever. Keep positive but understated.
+11. Ensure every review feels unique: vary vocabulary, sentence length, and focus.
 
 --------------------------------------------------
 CATEGORY INTELLIGENCE (VERY IMPORTANT)
 --------------------------------------------------
-Understand the category and behave accordingly:
+Adapt deeply to category for authenticity and SEO relevance:
 
 IF category is DOCTOR / PSYCHIATRIST / CLINIC:
-- Use real condition keywords naturally:
-  anxiety, stress, low mood, sleep issues, habit issues, confusion, emotional balance
-- Talk about clarity, calm discussion, understanding the problem
-- Never sound medical or promotional
+- Naturally weave in everyday issues: feeling anxious, low energy, trouble sleeping, daily stress, emotional ups and downs, habit struggles.
+- Focus on personal benefits: felt heard, got practical tips, noticed improvement over time, clearer mindset.
+- Mention aspects like calm approach, clean setup, helpful staff indirectly.
+- Sound reflective and grateful, not promotional.
 
 IF category is HOSPITAL / DIAGNOSTIC:
-- Mention clarity of process, staff support, cleanliness, confidence
+- Highlight smooth processes, supportive team, reliable results, sense of relief.
 
 IF category is HOTEL:
-- Mention comfort, cleanliness, location, stay experience
+- Touch on comfy rooms, good location, quiet stay, helpful front desk.
 
 IF category is RESTAURANT / CAFE:
-- Mention food taste, service, ambience, comfort
+- Describe tasty dishes, prompt service, cozy vibe, value for money.
 
 IF category is SALON / SPA:
-- Mention comfort, hygiene, grooming, relaxation
+- Note relaxing treatment, neat results, hygienic space, friendly chat.
 
 IF category is GYM:
-- Mention routine, guidance, motivation, consistency
+- Mention effective workouts, motivating trainers, well-maintained gear, progress felt.
 
 IF category is BUSINESS / AGENCY / SERVICE:
-- Mention clarity, communication, results, support
+- Emphasize clear communication, timely delivery, positive outcomes, ongoing support.
 
-DO NOT list services.
-DO NOT repeat the same condition every time.
-Randomly choose ONE experience related to services.
+DO NOT list services or features. Pick 1-2 experiences randomly and describe personally.
+Incorporate SEO naturally: include location-based phrases, service hints that match common searches.
 
 --------------------------------------------------
 ANTI-REPETITION CONTROL
 --------------------------------------------------
-❌ Avoid starting repeatedly with:
-"I've been", "I was", "I felt"
-
-Use varied sentence structures every time.
+❌ Avoid repetitive starters: Mix up completely (e.g., 'Lately I've been...', 'After trying a few places...', 'On a friend's advice...').
+Vary experiences: Don't reuse the same issue or benefit; randomize from services.
 
 --------------------------------------------------
-OPENING STYLE (PICK ONE RANDOMLY)
+OPENING STYLE (PICK ONE RANDOMLY AND VARY)
 --------------------------------------------------
-- A few things needed sorting out
-- Things didn’t feel clear at first
-- Someone I trust suggested this place
-- I decided to look for proper guidance
-- I wanted to get some clarity before moving ahead
-- Handling everything alone wasn’t easy
-- I felt it was time to approach this differently
-- I needed a clearer way forward
-- I chose to get some proper support
-- There was a lot going on recently
+- Lately, things have been a bit off with...
+- A friend mentioned trying...
+- I was looking around for help with...
+- Decided to check out something for...
+- Had been dealing with some...
+- Felt like I needed to sort out...
+- Came across this while searching in...
+- It was time to address...
+- Struggling a little with...
+- Wanted a fresh perspective on...
 
 --------------------------------------------------
 MIDDLE EXPERIENCE
 --------------------------------------------------
-Describe ONE real experience:
-- calm explanation
-- practical guidance
-- comfort
-- clarity
-- improvement
-- reassurance
+Describe ONE-TWO real, specific moments:
+- A thoughtful conversation that cleared doubts.
+- Practical advice that fit my routine.
+- Noticed things getting better gradually.
+- Felt more at ease after the visit.
+- Appreciated the straightforward approach.
+- The environment was welcoming and tidy.
+Integrate business name here naturally (e.g., 'At {business['name']}, they explained...').
 
 --------------------------------------------------
 BUSINESS NAME PLACEMENT
 --------------------------------------------------
-Mention {business['name']} EXACTLY ONCE,
-in sentence 2 or 3.
-
+Mention {business['name']} EXACTLY ONCE, fluidly in context.
 Examples:
-- Talking to {business['name']} helped…
-- The experience at {business['name']} felt…
-- Support from {business['name']} made things clearer…
+- During my visit to {business['name']}...
+- {business['name']} provided...
+- Found {business['name']} to be...
 
 --------------------------------------------------
 CITY PLACEMENT
 --------------------------------------------------
-Mention {business['city']} ONCE,
-separate from business name.
-
+Mention {business['city']} ONCE, casually.
 Examples:
-- here in {business['city']}
-- around {business['city']}
-- in this part of {business['city']}
+- right here in {business['city']}
+- over in {business['city']} side
+- local spot in {business['city']}
 
 --------------------------------------------------
-SEO-AWARE ENDING (PICK ONE RANDOMLY)
+SEO-AWARE ENDING (PICK ONE RANDOMLY AND VARY)
 --------------------------------------------------
-- Things feel easier to manage now.
-- I’m feeling more settled now.
-- It helped me think clearly.
-- It worked well for my situation.
-- I’m glad I went ahead with this.
-- It was a good option locally.
-- I feel more confident now.
-- It brought useful clarity.
-- Overall, it was a good decision.
+- It's made a difference for me.
+- Would go back if needed.
+- Glad I chose this.
+- Helped more than I expected.
+- Feels like a reliable choice.
+- Settled things nicely.
+- Worth the time.
+- Left with better understanding.
+- Good experience overall.
+- Planning to recommend to others.
+
+Optimize for Google: End with subtle calls to local search intent, like implying reliability in the area.
 
 --------------------------------------------------
 FINAL OUTPUT RULE
 --------------------------------------------------
-Return ONLY the final 2–3 sentence review.
+Return ONLY the final review text.
 No quotes.
 No explanations.
 STOP immediately after the review.
