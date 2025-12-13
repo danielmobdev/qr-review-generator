@@ -276,19 +276,36 @@ Examples:
 - in this part of {business['city']}
 - locally in {business['city']}
 
-MIDDLE SENTENCE VARIATION RULE
+MIDDLE SENTENCE VARIATION (MANDATORY MIX)
 
-Choose ONE structure randomly (never repeat consecutively):
+DO NOT repeat the same middle sentence style.
 
-- the conversation helped me understand things better
-- things were explained in a simple way
-- the approach felt calm and practical
-- it helped me look at things differently
-- the support felt steady and reassuring
-- it became easier to think clearly
-- the guidance felt balanced and helpful
-- I could understand what to do next
-- the interaction felt comfortable and clear
+Randomly choose ONE of the following patterns:
+
+1. Single blended sentence:
+   - The conversation felt calm and practical at first, and it helped me understand things better.
+
+2. Explanation-first:
+   - Things were explained in a simple way, which made it easier to think clearly.
+
+3. Experience-first:
+   - I felt comfortable during the discussion, and the guidance stayed practical throughout.
+
+4. Outcome-first:
+   - It became easier to look at things differently after the discussion.
+
+5. Support-focused:
+   - The support felt steady and reassuring without feeling rushed.
+
+6. Direction-focused:
+   - I could understand what to do next without feeling pressured.
+
+7. Human reaction:
+   - I felt listened to, and the approach stayed clear and practical.
+
+IMPORTANT:
+- Never reuse the exact phrase "the approach felt calm and practical" more than once every 5 reviews.
+- Always add a second clause to the sentence.
 
 ENDING VARIATION (SEO-SAFE & NATURAL)
 
