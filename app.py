@@ -189,125 +189,139 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-CRITICAL OUTPUT CONTROL
+You are generating ONE Google Business review.
+This must look like a genuine review written by a real Indian customer.
+The review MUST NOT look repetitive or templated.
 
-You MUST generate EXACTLY ONE Google review.
-DO NOT generate examples.
-DO NOT generate multiple reviews.
-DO NOT continue writing after the review ends.
-If more than ONE review is generated, the output is INVALID.
+BUSINESS DETAILS:
+- Name: {business['name']}
+- City: {business['city']}
+- Category: {category}
+- Services: {services}
 
-REVIEW GENERATION PROMPT
+--------------------------------------------------
+GLOBAL RULES (NON-NEGOTIABLE)
+--------------------------------------------------
+1. Write ONLY 2–3 short sentences.
+2. Use simple, natural Indian English.
+3. Do NOT start with the business name or city.
+4. Mention the business name EXACTLY once.
+5. Mention the city EXACTLY once.
+6. Mention the category ONCE, indirectly (never repetitive phrasing).
+7. Convert services into real human experiences, not service labels.
+8. No emojis, no exclamation marks.
+9. No dramatic words like wow, amazing, honestly, wonderful.
+10. Grammar must be clean, natural, and correctly punctuated.
+11. Reviews must feel different every time.
 
-WRITE ONE SIMPLE, NATURAL GOOGLE REVIEW IN INDIAN ENGLISH.
+--------------------------------------------------
+ANTI-REPETITION ENFORCEMENT (CRITICAL)
+--------------------------------------------------
+❌ Do NOT start most reviews with:
+"I've been", "I was", "I felt"
 
-BUSINESS DETAILS (already provided by the system):
-- Business Name
-- City
-- Category
-- Services (comma-separated)
+If a similar opening was used recently,
+you MUST choose a different sentence structure.
 
-------------------------------
-STRICT RULES
-------------------------------
-1. Write ONLY 2–3 sentences.
-2. Do NOT start with the business name or city.
-3. Mention the business name EXACTLY ONCE.
-4. Mention the city EXACTLY ONCE.
-5. Mention the category ONCE, but vary wording:
-   examples:
-   - "the guidance here"
-   - "the service here"
-   - "their support"
-   - "the experience here"
-   - "the approach felt practical"
-   NEVER repeat fixed phrases like "good psychiatrist".
-6. Convert services into HUMAN EXPERIENCES, not job titles.
-   Examples:
-   - anxiety → feeling anxious or worried
-   - depression → feeling low
-   - addiction → habit issues
-   - spa → feeling relaxed
-   - gym → building routine or fitness
-   - restaurant → food taste and comfort
-   - hotel → stay comfort and convenience
-7. Use correct contractions ONLY:
-   I'm, I've, It's, He's, They're
-   NEVER remove apostrophes.
-8. Simple Indian English.
-9. NO emojis.
-10. NO dramatic words (wow, amazing, honestly).
-11. NO punctuation except full stops and commas.
+--------------------------------------------------
+OPENING STYLE (PICK ONE RANDOMLY)
+--------------------------------------------------
 
-------------------------------
-RANDOM OPENING (CHOOSE ONE ONLY)
-------------------------------
-Pick ONE opening randomly. Do NOT reuse patterns.
+STYLE A — Situation-based:
+"Something wasn’t working the way I expected"
+"Things didn’t feel clear at first"
+"A few things needed sorting out"
+"It took time to understand what I needed"
+"Handling everything alone wasn’t easy"
+
+STYLE B — Decision-based:
+"I decided to check this place after some thought"
+"I felt it was time to try a different approach"
+"I chose to get some proper guidance"
+"I thought it would help to speak to professionals"
+"I went in hoping for some clarity"
+
+STYLE C — Recommendation-based:
+"Someone I trust suggested this place"
+"I heard about this place while asking around"
+"This was recommended to me by others"
+"I came here after a referral"
+"A recommendation led me here"
+
+STYLE D — Neutral human start:
+"There was a lot going on recently"
+"Things felt slightly overwhelming"
+"My situation needed attention"
+"Daily routines started feeling difficult"
+"I needed some outside perspective"
+
+STYLE E — Experience-first:
+"From the first interaction, things felt comfortable"
+"The overall experience felt calm"
+"Conversations here were easy and clear"
+"The approach here felt practical"
+"Things were explained in a simple way"
+
+--------------------------------------------------
+SERVICE HANDLING (UNIVERSAL)
+--------------------------------------------------
+From the provided services, randomly select 1–2 items
+and convert them into EXPERIENCES:
 
 Examples:
-- A few things needed sorting out
-- Someone suggested I look into this
-- I wanted some clarity before moving ahead
-- I felt the need to get things clarified
-- I decided to approach this calmly
-- I was looking for some direction
-- I wanted to understand a few things better
-- I felt it was time to get proper support
-- I wanted to get things back on track
-- I needed a clearer way forward
-- I chose to get some proper guidance
-- I was unsure how to handle a few things
+• salon → comfort, hygiene, styling experience
+• restaurant → food quality, service, ambience
+• hotel → stay comfort, cleanliness, staff behaviour
+• clinic → guidance, clarity, comfort
+• gym → training support, motivation, equipment
+• agency → clarity, results, communication
+• studio → professionalism, output quality
+• real estate → guidance, transparency, support
 
-------------------------------
-MIDDLE EXPERIENCE LOGIC
-------------------------------
-Explain ONE experience based on category/services:
-- calm explanation
-- practical guidance
-- comfort
-- clarity
-- improvement
-- convenience
-- support
-Use natural wording.
+NEVER list services.
+ALWAYS describe how it felt for the customer.
 
-------------------------------
+--------------------------------------------------
 BUSINESS NAME PLACEMENT
-------------------------------
-Insert the business name EXACTLY ONCE in sentence 2 or 3.
-Never at the start.
+--------------------------------------------------
+Mention {business['name']} EXACTLY once,
+in sentence 2 or 3, naturally embedded.
 
-------------------------------
-CITY PLACEMENT
-------------------------------
-Insert the city EXACTLY ONCE, separate from business name.
 Examples:
-- here in {business['city']}
-- around {business['city']}
-- in this part of {business['city']}
+- "The experience at {business['name']} helped…"
+- "Talking to {business['name']} made things clearer…"
+- "Support from {business['name']} felt reliable…"
 
-------------------------------
-SEO-AWARE ENDING (CHOOSE ONE)
-------------------------------
-End with ONE natural line that matches how people search on Google:
-- It helped me think more clearly.
+--------------------------------------------------
+CITY PLACEMENT
+--------------------------------------------------
+Mention {business['city']} ONCE, separated from the business name.
+
+Examples:
+- "here in {business['city']}"
+- "around {business['city']}"
+- "in this part of {business['city']}"
+
+--------------------------------------------------
+ENDING VARIATION (PICK ONE RANDOMLY)
+--------------------------------------------------
 - Things feel easier to manage now.
-- It was a good option for this area.
 - I’m feeling more settled now.
-- It worked well for what I needed.
-- I’m glad I chose this place.
-- It made things simpler for me.
-- I’d consider this a good choice locally.
-- It supported me in the right way.
-- I feel more confident going forward.
+- It’s been steady and helpful.
+- I’m glad I went ahead with this.
+- It brought useful clarity.
+- The experience felt reassuring.
+- I feel more confident now.
+- It helped me think clearly.
+- Overall, it was a good decision.
+- It worked well for my situation.
 
-------------------------------
-FINAL INSTRUCTION
-------------------------------
-Output ONLY the final 2–3 sentence review.
-NO quotes.
-NO examples.
-STOP immediately after the review ends.
+--------------------------------------------------
+FINAL OUTPUT RULE
+--------------------------------------------------
+Return ONLY the final review text.
+No quotes.
+No explanations.
 """
         try:
             response = model.generate_content(prompt)
