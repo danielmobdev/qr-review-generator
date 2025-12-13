@@ -189,7 +189,7 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-Write ONE simple, natural Google review in Indian English.
+Write ONE short, natural Google review in simple Indian English.
 
 BUSINESS DETAILS:
 - Name: {business['name']}
@@ -197,61 +197,103 @@ BUSINESS DETAILS:
 - Category: {category}
 - Services: {services}
 
------------------------------------------
+---------------------------------------------------
 STRICT WRITING RULES
------------------------------------------
-1. Write ONLY 2–3 short sentences. No long paragraphs.
-2. Must sound like a normal Indian person, not marketing.
-3. Do NOT start the review with the business name.
-4. Mention the business name EXACTLY once.
-5. Mention the city EXACTLY once.
-6. Mention the category EXACTLY once.
-7. Use simple everyday words — avoid dramatic tone.
-8. Allow natural contractions like he's, it's, I'm.
-9. Only commas and full stops allowed. No ! ? ; - ( ) or emojis.
-10. Never use phrases like honestly, wonderful, amazing, wasn't expecting, etc.
+---------------------------------------------------
+1. Write ONLY 2–3 short sentences.
+2. MUST sound like a real Indian customer talking casually.
+3. NEVER start with the business name.
+4. Mention business name EXACTLY once.
+5. Mention city EXACTLY once.
+6. Mention category EXACTLY once.
+7. Use natural contractions: he's, I'm, it's, they're.
+8. Use ONLY commas and full stops.
+9. No dramatic words: amazing, awesome, wonderful, truly, honestly, superb.
+10. No emojis, no exclamation marks.
+11. No repeated endings like "he's a good psychiatrist" or similar phrasing.
 
------------------------------------------
-SERVICE → HUMAN EXPERIENCE LOGIC
------------------------------------------
-From the services list, randomly select 1 or 2 items and convert them into
-natural human problems or improvements.
+---------------------------------------------------
+SERVICE → SYMPTOM CONVERSION LOGIC
+---------------------------------------------------
+Look at services and pick 1–2 items randomly.
+Convert them into NATURAL human feelings, NOT job titles.
 
 Examples:
-- anxiety → feeling anxious or worried
-- depression → low mood or sadness
-- neuropsychiatrist → behaviour or confusion issues
+- psychiatrist → stress, anxiety, mood issues
+- neuropsychiatrist → confusion, overthinking, behaviour issues
 - sexologist → personal or relationship concerns
-- addiction → habit or dependency issues
-- sleep issues → difficulty sleeping
-- stress → feeling mentally tired
+- drug deaddiction → habit problems, dependency issues
+- sleep problem → trouble sleeping
+- depression → low mood
+- schizophrenia → hearing things, confusion
 
-DO NOT mention the service name directly as a job title.
-Use it only as a human experience.
+DO NOT use service names as titles.
+Use them as experiences.
 
------------------------------------------
-RANDOM START STRUCTURE (CHOOSE ONE STYLE)
------------------------------------------
-Pick ANY one of the following patterns randomly:
+---------------------------------------------------
+RANDOM STRUCTURE (CHOOSE ANY ONE)
+---------------------------------------------------
+Choose ONE style randomly for each output:
 
-1. Feeling-first: "I was dealing with..., and the session really helped..."
-2. Recommendation-first: "Someone suggested this place, and..."
-3. Improvement-first: "I've been noticing a clear change after..."
-4. Comfort-first: "It felt easy to talk here, and..."
-5. Outcome-first: "Talking here helped me understand..."
-6. Visit-first: "I visited recently for..., and..."
-7. Neutral-first: "The experience here was quite helpful..."
+1. Feeling-first:
+   "I was dealing with…, and the session helped…"
 
------------------------------------------
-PLACEMENT RULE
------------------------------------------
-Place the business name, the city, and the category naturally at different
-positions in the review. Never all in one sentence.
+2. Visit-first:
+   "Went here recently for…, and…"
 
------------------------------------------
+3. Outcome-first:
+   "Talking here helped me understand…"
+
+4. Change-first:
+   "I’ve noticed a clear improvement…"
+
+5. Comfort-first:
+   "It felt easy to talk about things here…"
+
+6. Suggestion-first:
+   "Someone suggested I try this place, and…"
+
+7. Support-first:
+   "The way things were explained made it simpler…"
+
+---------------------------------------------------
+PLACEMENT RULE (IMPORTANT)
+---------------------------------------------------
+Place:
+- business name
+- city
+- category
+all in **different positions**, not in the same sentence.
+
+Example of correct placement:
+Sentence 1: mentions city
+Sentence 2: mentions business name
+Sentence 3: mentions category
+
+---------------------------------------------------
+ENDING STYLE (RANDOM MIX)
+---------------------------------------------------
+Choose ANY ending randomly from this list (or rewrite naturally):
+
+1. I feel better after the visit.
+2. It’s been a helpful experience overall.
+3. I’m seeing slow but steady improvement.
+4. I felt comfortable throughout.
+5. Things make more sense now.
+6. I’d suggest this place if you’re facing similar issues.
+7. I don’t feel as stressed now.
+8. I’m glad I decided to visit.
+9. It’s been good support for me.
+10. I’d recommend giving it a try.
+11. I feel more confident handling things now.
+12. Happy with the support I received.
+
+DO NOT end repeatedly with "he's a good psychiatrist" or similar patterns.
+
+---------------------------------------------------
 FINAL OUTPUT RULE
------------------------------------------
-Output ONLY the final review text. No quotes, no explanation.
+---------------------------------------------------
+Output ONLY the final review. No quotes. No extra text.
 """
         try:
             response = model.generate_content(prompt)
