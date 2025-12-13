@@ -189,148 +189,125 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-WRITE RULES (STRICT)
+CRITICAL OUTPUT CONTROL
 
-• Write ONLY ONE review
-• Length: exactly 2–3 sentences
-• Tone: Normal Indian English
-• Simple, calm, everyday language
-• No spelling mistakes
-• Use contractions naturally (I'm, it's, I've, didn't, wasn't)
-• NO emojis
-• NO exclamation marks
-• NO dramatic words (wow, amazing, honestly, excellent, outstanding)
-• NEVER sound like an advertisement
+You MUST generate EXACTLY ONE Google review.
+DO NOT generate examples.
+DO NOT generate multiple reviews.
+DO NOT continue writing after the review ends.
+If more than ONE review is generated, the output is INVALID.
 
-OPENING RULE (ANTI-REPETITION — VERY IMPORTANT)
+REVIEW GENERATION PROMPT
 
-DO NOT reuse similar openings like:
-"I’ve been feeling..."
-"I’ve been worried..."
-"I’ve been dealing..."
+WRITE ONE SIMPLE, NATURAL GOOGLE REVIEW IN INDIAN ENGLISH.
 
-Instead, RANDOMLY choose ONE opening from this pool
-(ensure variation every time):
+BUSINESS DETAILS (already provided by the system):
+- Business Name
+- City
+- Category
+- Services (comma-separated)
 
+------------------------------
+STRICT RULES
+------------------------------
+1. Write ONLY 2–3 sentences.
+2. Do NOT start with the business name or city.
+3. Mention the business name EXACTLY ONCE.
+4. Mention the city EXACTLY ONCE.
+5. Mention the category ONCE, but vary wording:
+   examples:
+   - "the guidance here"
+   - "the service here"
+   - "their support"
+   - "the experience here"
+   - "the approach felt practical"
+   NEVER repeat fixed phrases like "good psychiatrist".
+6. Convert services into HUMAN EXPERIENCES, not job titles.
+   Examples:
+   - anxiety → feeling anxious or worried
+   - depression → feeling low
+   - addiction → habit issues
+   - spa → feeling relaxed
+   - gym → building routine or fitness
+   - restaurant → food taste and comfort
+   - hotel → stay comfort and convenience
+7. Use correct contractions ONLY:
+   I'm, I've, It's, He's, They're
+   NEVER remove apostrophes.
+8. Simple Indian English.
+9. NO emojis.
+10. NO dramatic words (wow, amazing, honestly).
+11. NO punctuation except full stops and commas.
+
+------------------------------
+RANDOM OPENING (CHOOSE ONE ONLY)
+------------------------------
+Pick ONE opening randomly. Do NOT reuse patterns.
+
+Examples:
 - A few things needed sorting out
-- I decided to get some proper guidance
-- Someone I trust suggested this place
-- I wanted to understand a few things better
-- I was looking for some direction
+- Someone suggested I look into this
+- I wanted some clarity before moving ahead
 - I felt the need to get things clarified
-- I chose to speak to someone about my situation
-- I wanted a clearer idea of what to do next
+- I decided to approach this calmly
+- I was looking for some direction
+- I wanted to understand a few things better
 - I felt it was time to get proper support
-- I was hoping to find some clarity
-- I needed help making sense of a few things
-- I wasn’t sure how to handle certain things
-- I wanted to check if I was thinking in the right direction
-- I felt it was better to seek guidance
-- I needed someone experienced to help me understand things
-- I decided to approach this calmly and get help
+- I wanted to get things back on track
+- I needed a clearer way forward
+- I chose to get some proper guidance
+- I was unsure how to handle a few things
 
-Never start two reviews with similar wording.
+------------------------------
+MIDDLE EXPERIENCE LOGIC
+------------------------------
+Explain ONE experience based on category/services:
+- calm explanation
+- practical guidance
+- comfort
+- clarity
+- improvement
+- convenience
+- support
+Use natural wording.
 
-CATEGORY & SERVICE HANDLING (UNIVERSAL)
+------------------------------
+BUSINESS NAME PLACEMENT
+------------------------------
+Insert the business name EXACTLY ONCE in sentence 2 or 3.
+Never at the start.
 
-You MUST reflect the category and services,
-but NEVER list services like a brochure.
-
-Convert services into REAL experiences:
-
-Examples:
-• Psychiatrist → stress, habits, anxiety, clarity, calm conversation
-• Clinic/Hospital → explanation, comfort, hygiene, staff support
-• Restaurant → taste, waiting time, service, ambience
-• Hotel → stay, cleanliness, comfort, location
-• Salon → grooming result, comfort, staff behaviour
-• Gym → routine, guidance, equipment, consistency
-• Digital/Marketing → clarity, results, support, guidance
-• Studio/Photography → coordination, quality, comfort
-• Education → understanding, guidance, confidence
-
-Mention ONLY 1 service-related experience per review.
-
-BUSINESS NAME RULE
-
-• Mention the business name EXACTLY ONCE
-• NEVER in the first sentence
-• Vary placement naturally using different structures:
-
-Examples:
-- Visiting {business['name']} helped…
-- Talking things through at {business['name']} made…
-- The experience with {business['name']} felt…
-- I later visited {business['name']} and…
-- Choosing {business['name']} turned out to be helpful
-
-CITY PLACEMENT RULE
-
-• Mention city EXACTLY ONCE
-• NEVER directly next to business name
-• RANDOM placement:
-
+------------------------------
+CITY PLACEMENT
+------------------------------
+Insert the city EXACTLY ONCE, separate from business name.
 Examples:
 - here in {business['city']}
 - around {business['city']}
 - in this part of {business['city']}
-- locally in {business['city']}
 
-MIDDLE SENTENCE VARIATION (MANDATORY MIX)
-
-DO NOT repeat the same middle sentence style.
-
-Randomly choose ONE of the following patterns:
-
-1. Single blended sentence:
-   - The conversation felt calm and practical at first, and it helped me understand things better.
-
-2. Explanation-first:
-   - Things were explained in a simple way, which made it easier to think clearly.
-
-3. Experience-first:
-   - I felt comfortable during the discussion, and the guidance stayed practical throughout.
-
-4. Outcome-first:
-   - It became easier to look at things differently after the discussion.
-
-5. Support-focused:
-   - The support felt steady and reassuring without feeling rushed.
-
-6. Direction-focused:
-   - I could understand what to do next without feeling pressured.
-
-7. Human reaction:
-   - I felt listened to, and the approach stayed clear and practical.
-
-IMPORTANT:
-- Never reuse the exact phrase "the approach felt calm and practical" more than once every 5 reviews.
-- Always add a second clause to the sentence.
-
-ENDING VARIATION (SEO-SAFE & NATURAL)
-
-Pick ONE ending randomly.
-These should reflect how people SEARCH on Google naturally:
-
-- Things feel easier to manage now.
-- I’m feeling more settled now.
+------------------------------
+SEO-AWARE ENDING (CHOOSE ONE)
+------------------------------
+End with ONE natural line that matches how people search on Google:
 - It helped me think more clearly.
-- I’m glad I reached out for help.
-- It’s been helpful overall.
+- Things feel easier to manage now.
+- It was a good option for this area.
+- I’m feeling more settled now.
+- It worked well for what I needed.
+- I’m glad I chose this place.
+- It made things simpler for me.
+- I’d consider this a good choice locally.
+- It supported me in the right way.
 - I feel more confident going forward.
-- It worked out well for me.
-- I’m happy with how things turned out.
-- It gave me the clarity I needed.
-- I’d consider this a good option locally.
-- It was the right choice for me in this area.
 
-FINAL OUTPUT RULE
-
-Output ONLY the final review text.
-No quotes.
-No explanations.
-No formatting.
-No headings.
+------------------------------
+FINAL INSTRUCTION
+------------------------------
+Output ONLY the final 2–3 sentence review.
+NO quotes.
+NO examples.
+STOP immediately after the review ends.
 """
         try:
             response = model.generate_content(prompt)
