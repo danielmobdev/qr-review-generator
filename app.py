@@ -189,107 +189,73 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-WRITE A SIMPLE 2–3 SENTENCE REVIEW (INDIAN ENGLISH)
+Write ONE simple and natural Google review in normal Indian English.
 
 BUSINESS DETAILS:
 - Name: {business['name']}
 - City: {business['city']}
 - Category: {category}
-- Services: {services}
+- Services list: {services}
 
------------------------------------------
-RULES
------------------------------------------
-1. Do NOT start with the business name or the city.
-2. Mention business name EXACTLY once in sentence 2 or 3.
-3. Mention city EXACTLY once but NEVER directly next to the business name.
-4. Mention category (psychiatrist etc.) once, but vary expression:
-   - "the psychiatrist here"
-   - "their psychiatric guidance"
-   - "the doctor’s support"
-   - "the medical guidance here"
-   Never say "good psychiatrist" every time.
-   Never say "as a psychiatrist".
-5. Convert service names into human experiences:
-   anxiety → feeling anxious or worried
-   depression → low mood
-   addiction → habit issues
-   neuropsychiatrist → behaviour or confusion issues
-6. Use contractions: I’ve, it’s, he’s, I’m, didn’t, wasn’t.
-7. Simple, natural, everyday Indian-English tone.
-8. NO dramatic words: wow, amazing, wonderful, honestly.
-9. NO emojis and NO exclamation marks.
-10. No repetitive patterns across reviews.
+---------------------------------------------
+STRICT WRITING RULES
+---------------------------------------------
+1. Write ONLY 2–3 short sentences.
+2. Must sound like a real Indian person speaking casually.
+3. DO NOT start the review with the business name.
+4. Mention the business name EXACTLY once.
+5. Mention the city EXACTLY once.
+6. Mention the category EXACTLY once.
+7. Use simple natural contractions like I'm, it's, he's, they've.
+8. Allowed punctuation: comma and full stop ONLY.
+9. NO dramatic words like amazing, wonderful, exceptional, superb.
+10. NO emojis, NO hashtags, NO exclamation marks.
 
------------------------------------------
-RANDOM OPENING (CHOOSE ONE)
------------------------------------------
-Use one randomly:
-- I’ve been dealing with…
-- I was trying to understand…
-- I’ve been feeling a bit low…
-- I was having some trouble with…
-- I’ve been stressed lately…
-- I’ve been feeling quite overwhelmed…
-- I wanted clarity about…
-- I’ve been worried for a while…
-- I felt confused about a few things…
-- I needed some guidance for…
+---------------------------------------------
+SERVICE → HUMAN EXPERIENCE CONVERSION
+---------------------------------------------
+From the services list, choose ANY **1–2 services at random** and convert them into human experiences, NOT technical terms.
 
------------------------------------------
-RANDOM MIDDLE STRUCTURE (CHOOSE ONE)
------------------------------------------
-- and the session helped me look at things better.
-- and the doctor explained things in a simple way.
-- and the guidance made the situation easier.
-- and the support felt calm and steady.
-- and the doctor helped me understand the reasons behind it.
-- and their psychiatric approach made things clearer.
-- and the conversation felt comfortable.
-- and the guidance was patient and reassuring.
-- and I could talk without feeling judged.
+Examples:
+- photography → better photos for my event
+- videography → videos came out clear
+- editing → final output looked neat
+- SEO → my online visibility improved
+- social media marketing → my page got better engagement
+- habit issues → helped me get control
+- anxiety → helped me understand why I was feeling worried
+- haircut → haircut felt clean and neat
+- food quality → food tasted good and felt fresh
+- room service → staff handled things quickly
+- gym trainer → trainer guided properly
+- property visit → site visit explanation was clear
 
------------------------------------------
-BUSINESS INSERTION RULE
------------------------------------------
-Place the business name EXACTLY once in sentence 2 or 3, like:
-- "I visited **{business['name']}** later…"
-- "The guidance at **{business['name']}** felt helpful…"
-- "Talking to **{business['name']}** made things clearer…"
+Do NOT mention the service names directly if they sound technical.
+Convert them into everyday real-life experiences.
 
------------------------------------------
-CITY INSERTION RULE
------------------------------------------
-City must appear once, but randomly in sentence 2 or 3:
-- "here in {business['city']}"
-- "in this part of {business['city']}"
-- "around {business['city']}"
-NEVER next to business name.
+---------------------------------------------
+RANDOM STYLE (CHOOSE ANY ONE)
+---------------------------------------------
+Pick one structure randomly each time:
 
------------------------------------------
-RANDOM VARIED ENDINGS (CHOOSE ONE)
------------------------------------------
-Use exactly one:
-- I’m starting to feel a bit more sorted now.
-- It’s been steady and helpful for me.
-- I’m feeling lighter these days.
-- It gave me some clarity that I needed.
-- I’m slowly getting better with the support.
-- It’s been a comfortable experience for me.
-- I’m feeling more confident now.
-- It helped me think more clearly.
-- I’m beginning to feel more normal again.
-- It’s been reassuring for me.
-- I’m seeing small but positive changes.
-- It made things easier to manage.
-- I’m glad I reached out for help.
-- I’m feeling more settled now.
-- It’s been a reliable support overall.
+1. Feeling-first: "I was dealing with…, and the visit helped…"
+2. Experience-first: "The session/visit made things easier…"
+3. Recommendation-first: "Someone suggested this place, and…"
+4. Comfort-first: "It felt easy to talk/ask/visit…"
+5. Improvement-first: "I've noticed a clear change after…"
+6. Outcome-first: "Talking here helped me understand…"
+7. Visit-first: "Went here recently for…, and…"
 
------------------------------------------
-OUTPUT FORMAT
------------------------------------------
-Output ONLY the final 2–3 sentence review without quotes.
+---------------------------------------------
+PLACEMENT RULES
+---------------------------------------------
+Place business name, city, and category in DIFFERENT sentences.
+None of them should appear in the very first line.
+
+---------------------------------------------
+FINAL OUTPUT RULE
+---------------------------------------------
+Output ONLY the final review text with NO quotes, NO labels, NO explanation.
 """
         try:
             response = model.generate_content(prompt)
