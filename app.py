@@ -189,7 +189,7 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-Write ONE simple and natural Google review in Indian English.
+Write ONE simple, natural Google review in Indian English.
 
 BUSINESS DETAILS:
 - Name: {business['name']}
@@ -200,57 +200,58 @@ BUSINESS DETAILS:
 -----------------------------------------
 STRICT WRITING RULES
 -----------------------------------------
-1. Write ONLY 2–3 short sentences.
-2. Must sound 100% like a normal Indian person.
-3. Do NOT start with the business name.
-4. Mention business name EXACTLY once.
-5. Mention city EXACTLY once.
-6. Mention category EXACTLY once.
-7. Use simple words; no dramatic tone.
-8. Use everyday natural contractions like he's, it's, I'm.
-9. Use ONLY full stops and commas, no other punctuation.
-10. No wow, amazing, honestly, wonderful, etc.
+1. Write ONLY 2–3 short sentences. No long paragraphs.
+2. Must sound like a normal Indian person, not marketing.
+3. Do NOT start the review with the business name.
+4. Mention the business name EXACTLY once.
+5. Mention the city EXACTLY once.
+6. Mention the category EXACTLY once.
+7. Use simple everyday words — avoid dramatic tone.
+8. Allow natural contractions like he's, it's, I'm.
+9. Only commas and full stops allowed. No ! ? ; - ( ) or emojis.
+10. Never use phrases like honestly, wonderful, amazing, wasn't expecting, etc.
 
 -----------------------------------------
-SERVICE & SYMPTOM LOGIC
+SERVICE → HUMAN EXPERIENCE LOGIC
 -----------------------------------------
-Choose 1 or 2 items randomly from the services list and convert them into natural human problems, experiences or improvements.
+From the services list, randomly select 1 or 2 items and convert them into
+natural human problems or improvements.
 
-Examples (for psychiatrists):
+Examples:
 - anxiety → feeling anxious or worried
-- depression → low mood
-- neuropsychiatrist → confusion or behaviour issues
+- depression → low mood or sadness
+- neuropsychiatrist → behaviour or confusion issues
 - sexologist → personal or relationship concerns
 - addiction → habit or dependency issues
-- sleep problem → trouble sleeping
-- schizophrenia → hearing things, overthinking, confusion
+- sleep issues → difficulty sleeping
+- stress → feeling mentally tired
 
-Do NOT use service names as job titles.  
-Use them as experiences the customer had.
+DO NOT mention the service name directly as a job title.
+Use it only as a human experience.
 
 -----------------------------------------
-RANDOM STRUCTURE (CHOOSE ONE STYLE)
+RANDOM START STRUCTURE (CHOOSE ONE STYLE)
 -----------------------------------------
-Pick any 1 structure randomly:
+Pick ANY one of the following patterns randomly:
 
-1. Feeling-first: "I was dealing with…, and the session helped…"
-2. Recommendation-first: "Someone suggested this place, and…"
-3. Improvement-first: "I've noticed a clear change after…"
-4. Comfort-first: "It felt easy to talk here…"
-5. Outcome-first: "Talking here helped me understand…"
-6. Visit-first: "Went here last week for…, and…"
-7. Experience-first: "The doctor explained everything clearly…"
+1. Feeling-first: "I was dealing with..., and the session really helped..."
+2. Recommendation-first: "Someone suggested this place, and..."
+3. Improvement-first: "I've been noticing a clear change after..."
+4. Comfort-first: "It felt easy to talk here, and..."
+5. Outcome-first: "Talking here helped me understand..."
+6. Visit-first: "I visited recently for..., and..."
+7. Neutral-first: "The experience here was quite helpful..."
 
 -----------------------------------------
 PLACEMENT RULE
 -----------------------------------------
-Place business name, city AND category in DIFFERENT parts of the review every time.  
-NEVER at the start of sentence 1.
+Place the business name, the city, and the category naturally at different
+positions in the review. Never all in one sentence.
 
 -----------------------------------------
 FINAL OUTPUT RULE
 -----------------------------------------
-Output ONLY the final review text with NO quotes.
+Output ONLY the final review text. No quotes, no explanation.
 """
         try:
             response = model.generate_content(prompt)
