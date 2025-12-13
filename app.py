@@ -189,9 +189,7 @@ def generate_review_route(slug):
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
         prompt = f"""
-You are generating ONE Google Business review.
-This must look like a genuine review written by a real Indian customer.
-The review MUST NOT look repetitive or templated.
+WRITE ONE NATURAL GOOGLE BUSINESS REVIEW (2–3 SENTENCES)
 
 BUSINESS DETAILS:
 - Name: {business['name']}
@@ -200,128 +198,127 @@ BUSINESS DETAILS:
 - Services: {services}
 
 --------------------------------------------------
-GLOBAL RULES (NON-NEGOTIABLE)
+ABSOLUTE RULES (DO NOT BREAK)
 --------------------------------------------------
-1. Write ONLY 2–3 short sentences.
-2. Use simple, natural Indian English.
-3. Do NOT start with the business name or city.
-4. Mention the business name EXACTLY once.
-5. Mention the city EXACTLY once.
-6. Mention the category ONCE, indirectly (never repetitive phrasing).
-7. Convert services into real human experiences, not service labels.
-8. No emojis, no exclamation marks.
-9. No dramatic words like wow, amazing, honestly, wonderful.
-10. Grammar must be clean, natural, and correctly punctuated.
-11. Reviews must feel different every time.
-
---------------------------------------------------
-ANTI-REPETITION ENFORCEMENT (CRITICAL)
---------------------------------------------------
-❌ Do NOT start most reviews with:
-"I've been", "I was", "I felt"
-
-If a similar opening was used recently,
-you MUST choose a different sentence structure.
-
---------------------------------------------------
-OPENING STYLE (PICK ONE RANDOMLY)
---------------------------------------------------
-
-STYLE A — Situation-based:
-"Something wasn’t working the way I expected"
-"Things didn’t feel clear at first"
-"A few things needed sorting out"
-"It took time to understand what I needed"
-"Handling everything alone wasn’t easy"
-
-STYLE B — Decision-based:
-"I decided to check this place after some thought"
-"I felt it was time to try a different approach"
-"I chose to get some proper guidance"
-"I thought it would help to speak to professionals"
-"I went in hoping for some clarity"
-
-STYLE C — Recommendation-based:
-"Someone I trust suggested this place"
-"I heard about this place while asking around"
-"This was recommended to me by others"
-"I came here after a referral"
-"A recommendation led me here"
-
-STYLE D — Neutral human start:
-"There was a lot going on recently"
-"Things felt slightly overwhelming"
-"My situation needed attention"
-"Daily routines started feeling difficult"
-"I needed some outside perspective"
-
-STYLE E — Experience-first:
-"From the first interaction, things felt comfortable"
-"The overall experience felt calm"
-"Conversations here were easy and clear"
-"The approach here felt practical"
-"Things were explained in a simple way"
+1. Write ONLY 2–3 sentences.
+2. Use normal Indian English (simple, calm, human).
+3. Do NOT start with the business name or the city.
+4. Mention the business name EXACTLY ONCE.
+5. Mention the city EXACTLY ONCE.
+6. Mention the category ONCE, but vary wording naturally.
+   Examples:
+   - the guidance here
+   - the service quality
+   - the professional support
+   - the medical help
+   - the experience here
+   (Do NOT repeat fixed phrases like "good psychiatrist".)
+7. Convert services into HUMAN EXPERIENCES, not job titles.
+   Examples:
+   anxiety → feeling anxious or worried
+   depression → low mood
+   addiction → habit issues
+   restaurant service → staff behaviour or waiting time
+   salon → haircut or grooming experience
+   hotel → stay comfort or cleanliness
+8. Use contractions where natural: I’m, it’s, I’ve, didn’t.
+9. NO spelling mistakes.
+10. NO emojis, NO exclamation marks.
+11. No dramatic words (wow, amazing, honestly, wonderful).
+12. Every review must feel different.
 
 --------------------------------------------------
-SERVICE HANDLING (UNIVERSAL)
+RANDOM OPENING (PICK ONE ONLY)
 --------------------------------------------------
-From the provided services, randomly select 1–2 items
-and convert them into EXPERIENCES:
+Choose ONE opening randomly from this list:
 
+A few things needed sorting out.
+Someone I trust suggested this place.
+I decided to get some proper guidance.
+I wanted to understand a few things better.
+I felt it was time to seek some clarity.
+I chose to talk to someone about it.
+I needed help making sense of things.
+I was looking for some direction.
+I wanted an opinion from a professional.
+I felt unsure and needed support.
+I was trying to handle a few things better.
+I wanted to check if this was the right step.
+I felt it would help to talk things through.
+I was looking for a better way forward.
+I needed some calm guidance.
+I wanted help understanding my situation.
+I felt confused and wanted clarity.
+I was dealing with something and needed advice.
+I felt the need to get proper support.
+I wanted to get things back on track.
+
+--------------------------------------------------
+MIDDLE STRUCTURE (PICK ONE)
+--------------------------------------------------
+Choose ONE:
+
+• The guidance helped me understand things better.
+• The support felt calm and reassuring.
+• The explanation was simple and clear.
+• The experience felt comfortable.
+• The approach helped me look at things differently.
+• The service made things easier to manage.
+• The interaction felt patient and steady.
+• The help gave me better clarity.
+• The overall experience was balanced and supportive.
+
+--------------------------------------------------
+BUSINESS NAME INSERTION RULE
+--------------------------------------------------
+Insert the business name EXACTLY ONCE in sentence 2 or 3.
 Examples:
-• salon → comfort, hygiene, styling experience
-• restaurant → food quality, service, ambience
-• hotel → stay comfort, cleanliness, staff behaviour
-• clinic → guidance, clarity, comfort
-• gym → training support, motivation, equipment
-• agency → clarity, results, communication
-• studio → professionalism, output quality
-• real estate → guidance, transparency, support
-
-NEVER list services.
-ALWAYS describe how it felt for the customer.
+- The guidance at {business['name']} felt helpful.
+- Talking to {business['name']} helped me understand things better.
+- The experience at {business['name']} was reassuring.
 
 --------------------------------------------------
-BUSINESS NAME PLACEMENT
+CITY INSERTION RULE
 --------------------------------------------------
-Mention {business['name']} EXACTLY once,
-in sentence 2 or 3, naturally embedded.
-
-Examples:
-- "The experience at {business['name']} helped…"
-- "Talking to {business['name']} made things clearer…"
-- "Support from {business['name']} felt reliable…"
-
---------------------------------------------------
-CITY PLACEMENT
---------------------------------------------------
-Mention {business['city']} ONCE, separated from the business name.
-
-Examples:
-- "here in {business['city']}"
-- "around {business['city']}"
-- "in this part of {business['city']}"
+Mention the city ONCE, but NOT next to the business name.
+Use formats like:
+- here in {business['city']}
+- around {business['city']}
+- in this part of {business['city']}
 
 --------------------------------------------------
 ENDING VARIATION (PICK ONE RANDOMLY)
 --------------------------------------------------
-- Things feel easier to manage now.
-- I’m feeling more settled now.
-- It’s been steady and helpful.
-- I’m glad I went ahead with this.
-- It brought useful clarity.
-- The experience felt reassuring.
-- I feel more confident now.
-- It helped me think clearly.
-- Overall, it was a good decision.
-- It worked well for my situation.
+Use ONE ending only.
+
+NATURAL ENDINGS:
+• Things feel easier to manage now.
+• I’m feeling more settled now.
+• It brought useful clarity.
+• The experience felt reassuring.
+• I feel more confident now.
+• It helped me think clearly.
+• Overall, it was a good decision.
+• It worked well for my situation.
+• I’m glad I went ahead with this.
+
+SEARCH-INTENT NATURAL ENDINGS (USE RARELY):
+• It’s a good option if you’re looking for this kind of service nearby.
+• Worth considering if you’re searching for something like this locally.
+• A reasonable choice for anyone looking for this service in the area.
+• Helpful for people searching around this part of the city.
+• It fits well if you’re looking for this kind of support near you.
+
+IMPORTANT:
+Do NOT use search-intent endings more than 30–40% of the time.
 
 --------------------------------------------------
-FINAL OUTPUT RULE
+FINAL OUTPUT
 --------------------------------------------------
-Return ONLY the final review text.
-No quotes.
-No explanations.
+Output ONLY the final review text.
+NO quotes.
+NO explanations.
+NO headings.
 """
         try:
             response = model.generate_content(prompt)
