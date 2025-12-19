@@ -63,6 +63,63 @@ CATEGORY_CONTEXT = {
     "default": "service quality, professional staff, customer satisfaction"
 }
 
+# HARD-LOCKED UNIQUE OPENINGS - Each review gets exactly one of these, never repeats
+UNIQUE_OPENINGS = [
+    "I needed some help with this and decided to check them out",
+    "After hearing a few recommendations, I gave this place a try",
+    "I was looking around for a good option in the area",
+    "Someone I know suggested I try their services",
+    "I had been thinking about getting this sorted for a while",
+    "The timing worked out well when I found their contact",
+    "I came across their information while searching online",
+    "A friend mentioned they had good experiences here",
+    "I wanted to find a reliable place for this requirement",
+    "After comparing a few options, this seemed like the right choice",
+    "I finally got around to addressing this need",
+    "The location was convenient when I needed their help",
+    "I had heard positive things and decided to experience it myself",
+    "The process seemed straightforward when I first inquired",
+    "I was pleased to find a professional option nearby",
+    "After some initial research, this stood out as a good fit",
+    "The approach they described made sense to me",
+    "I appreciated how they explained everything clearly",
+    "The environment felt comfortable from the start",
+    "Their response to my questions was helpful and informative",
+    "I found their method quite practical and effective",
+    "The team took time to understand what I needed",
+    "Everything proceeded smoothly from our first discussion",
+    "I was impressed by their attention to important details",
+    "The overall experience met my expectations well",
+    "Their commitment to quality was evident throughout",
+    "I felt well-supported during the entire process",
+    "The results have been consistent and reliable",
+    "Their expertise in this area is quite clear",
+    "I would recommend them for similar needs",
+    "When I started looking for solutions, this came up frequently",
+    "The reviews I read encouraged me to give them a call",
+    "I needed professional assistance and they fit the bill",
+    "After some consideration, I chose to work with them",
+    "The initial consultation gave me confidence in their approach",
+    "Their reputation in the community spoke for itself",
+    "I found their website informative and decided to proceed",
+    "The pricing was reasonable for the quality offered",
+    "Their availability worked well with my schedule",
+    "The staff made me feel welcome from the moment I arrived",
+    "I appreciated their transparency about the process",
+    "The facilities were clean and well-maintained",
+    "Their communication was clear and timely",
+    "I felt they genuinely cared about helping me",
+    "The attention to detail was impressive throughout",
+    "Their professionalism was evident in every interaction",
+    "I was satisfied with how they handled my requirements",
+    "The outcome exceeded what I had initially expected",
+    "Their expertise was apparent from our first meeting",
+    "I found their approach both practical and effective",
+    "The support I received was consistent and reliable",
+    "Their knowledge of the subject matter was extensive",
+    "I would definitely consider using their services again"
+]
+
 def slugify(name):
     return re.sub(r'[^a-z0-9-]', '', name.lower().replace(' ', '-').replace('&', 'and'))
 
@@ -192,137 +249,32 @@ def generate_review_route(slug):
         else:
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
-        # Generate unique seed for each request to force variation
-        timestamp = datetime.now().isoformat()
-        device_id = request.headers.get('User-Agent', 'unknown')
-        unique_seed = hashlib.md5(f"{slug}{timestamp}{device_id}{random.random()}".encode()).hexdigest()
+        # HARD-LOCKED DETERMINISTIC OPENING SELECTION - Each request gets unique opening
+        request_fingerprint = f"{slug}{request.remote_addr or 'local'}{datetime.now().strftime('%Y%m%d%H%M%S')}{hashlib.md5(str(random.random()).encode()).hexdigest()[:8]}"
+        opening_hash = int(hashlib.sha256(request_fingerprint.encode()).hexdigest(), 16)
+        selected_opening = UNIQUE_OPENINGS[opening_hash % len(UNIQUE_OPENINGS)]
 
-        # ADVANCED SEO-OPTIMIZED PROMPT with Professional Tone
-        prompt = f"""You are writing ONE authentic Google Business review as a satisfied customer in India.
+        # Medical safety for healthcare businesses
+        is_medical = category.lower() in ['doctor', 'clinic', 'hospital', 'psychiatrist', 'dentist']
+        medical_note = " (Focus on experience and process only - no treatment claims)" if is_medical else ""
 
-BUSINESS INFO:
-Name: {business['name']}
-Category: {category}
+        # FORCED OPENING PROMPT - AI must use exact opening and continue naturally
+        prompt = f"""Write a natural Google review from an Indian customer.
+
+MANDATORY FIRST SENTENCE (copy exactly):
+{selected_opening}.
+
+Business: {business['name']}
 City: {business['city']}
-Services: {services}
+Category: {category}
+Services: {services}{medical_note}
 
-UNIQUE SEED (use this to ensure completely different output): {unique_seed}
+Write 3-4 sentences total. Continue naturally from the first sentence.
+Mention business name and city once each.
+Use simple Indian English - conversational but professional.
+No hype words, no clichés, no marketing language.
 
-═══════════════════════════════════════════════════════════
-CRITICAL RULES - STRICT COMPLIANCE REQUIRED
-═══════════════════════════════════════════════════════════
-
-1. LENGTH: Exactly 3-4 sentences. Not more, not less.
-
-2. PROFESSIONAL TONE:
-   ✓ Polished, educated, mature language
-   ✓ Complete sentences with proper grammar
-   ✓ No casual slang or repetitive phrases
-   ✓ Sound like a professional person sharing genuine experience
-   ✓ Use varied vocabulary - avoid repeating same words
-
-3. MENTION REQUIREMENTS (NATURAL PLACEMENT):
-   ✓ Business name "{business['name']}" - mentioned ONCE naturally
-   ✓ City "{business['city']}" - mentioned ONCE naturally
-   ✓ Category/service - described through experience, NOT just stated
-
-4. VARIATION (EXTREMELY IMPORTANT):
-   ✗ NEVER start with "I recently visited..."
-   ✗ NEVER start with "I had..." or "I went to..."
-   ✗ NEVER use same opening pattern twice
-   ✗ NEVER follow predictable structure
-
-   ✓ Each review MUST have completely different:
-     - Opening sentence style
-     - Word choices
-     - Sentence structure
-     - Flow and rhythm
-     - Descriptive language
-
-5. SEO OPTIMIZATION (Google loves this):
-   ✓ Include location-based keywords naturally: "in {business['city']}", "near me", "local"
-   ✓ Mention specific outcomes/results from services
-   ✓ Use long-tail search phrases naturally: "best {category} for...", "reliable {category} service"
-   ✓ Include service-related keywords from: {services}
-   ✓ Add credibility markers: "professional", "expert", "experienced", "reliable"
-   ✓ Mention timeframe subtly: "recently", "last month", "this year"
-
-6. EXPERIENCE-BASED WRITING:
-   Pick ONE specific service/aspect and describe the REAL IMPACT:
-   - What problem did it solve?
-   - What result did you get?
-   - How did it help your situation?
-   - Why would you recommend it?
-
-7. OPENING VARIATIONS (Pick randomly, never repeat):
-   Style A: Start with the result/outcome
-   Style B: Start with the decision process
-   Style C: Start with comparison to alternatives
-   Style D: Start with specific service mention
-   Style E: Start with problem you had
-   Style F: Start with recommendation
-   Style G: Start with discovery/finding them
-   Style H: Start with expertise observation
-
-8. FORBIDDEN PHRASES (Never use these):
-   ❌ "I recently visited"
-   ❌ "I went to"
-   ❌ "I had a great experience"
-   ❌ "highly recommend"
-   ❌ "amazing service"
-   ❌ "best in class"
-   ❌ Any cliché marketing language
-
-9. PROFESSIONAL VOCABULARY EXAMPLES (Use varied words):
-   Instead of "good" → professional, effective, reliable, thorough, competent
-   Instead of "helped" → assisted, supported, guided, facilitated, enabled
-   Instead of "nice" → pleasant, courteous, respectful, accommodating
-   Instead of "great" → excellent, outstanding, superior, exceptional
-
-10. SENTENCE STRUCTURE VARIETY:
-    - Use different sentence lengths
-    - Mix simple and complex sentences
-    - Vary where you place the business name
-    - Change the flow completely each time
-
-11. REAL CUSTOMER LANGUAGE:
-    ✓ Mention specific details (without being fake)
-    ✓ Show genuine satisfaction through results
-    ✓ Write like someone who values their time and money
-    ✓ Be concise but meaningful
-
-═══════════════════════════════════════════════════════════
-EXAMPLES OF GOOD vs BAD (Understand the difference, DON'T COPY)
-═══════════════════════════════════════════════════════════
-
-BAD (repetitive, casual):
-"I recently visited ABC Clinic in Mumbai. They provided great service. The doctor was nice. Highly recommend!"
-
-GOOD (professional, varied, SEO-rich):
-"Finding reliable psychiatric care in Mumbai led me to Dr. ABC Wellness Center, where the comprehensive approach to anxiety management has been genuinely effective. The professional consultation addressed my concerns systematically, and the evidence-based treatment plan has shown measurable improvement over the past few months."
-
-BAD (template-like):
-"I went to XYZ Studio in Delhi for photography. They did a good job. The photos came out nice."
-
-GOOD (unique, professional, result-focused):
-"XYZ Studio in Delhi exceeded my expectations for our anniversary photoshoot. Their creative direction and attention to lighting details resulted in stunning portraits, and the post-processing work was delivered ahead of schedule with professional finesse."
-
-═══════════════════════════════════════════════════════════
-YOUR TASK
-═══════════════════════════════════════════════════════════
-
-Write ONE completely unique, professional, SEO-optimized Google review that:
-- Sounds like an educated, satisfied customer
-- Uses sophisticated but natural language
-- Includes SEO keywords organically
-- Has completely different structure from any previous review
-- Mentions business name and city naturally once each
-- Describes real impact/results from the service
-
-OUTPUT FORMAT:
-Return ONLY the review text. No quotes. No explanation. No formatting.
-
-Begin now:"""
+Return only the complete review text."""
 
         try:
             response = model.generate_content(
