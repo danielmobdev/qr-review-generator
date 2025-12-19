@@ -7,10 +7,11 @@ import json
 import base64
 import qrcode
 import re
-from datetime import timedelta
+from datetime import timedelta, datetime
 import razorpay
 import hmac
 import hashlib
+import random
 
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
@@ -179,11 +180,11 @@ def generate_review_route(slug):
         if business['credit_balance'] <= 0:
             place_id_url = get_google_review_url(business.get('place_id', ''), business.get('name', ''), business.get('city', ''))
             return jsonify({'review': 'Credits finished. Please contact DAN AI to recharge.', 'google_link': place_id_url}), 200
-        
+
         # Deduct credit
         db.collection('businesses').document(slug).update({'credit_balance': firestore.Increment(-1)})
         db.collection('review_logs').add({'business_slug': slug, 'timestamp': firestore.SERVER_TIMESTAMP, 'ai_used': True})
-        
+
         category = business.get("category", "service")
         custom_services = business.get("services", "").strip()
         if custom_services:
@@ -191,45 +192,171 @@ def generate_review_route(slug):
         else:
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
-        # NEW IMPROVED PROMPT - More variation, less structure
-        prompt = f"""Write a genuine Google review from a real customer in India about their experience.
+        # Generate unique seed for each request to force variation
+        timestamp = datetime.now().isoformat()
+        device_id = request.headers.get('User-Agent', 'unknown')
+        unique_seed = hashlib.md5(f"{slug}{timestamp}{device_id}{random.random()}".encode()).hexdigest()
 
-Business: {business['name']}
-Type: {category}
-Location: {business['city']}
-What they offer: {services}
+        # ADVANCED SEO-OPTIMIZED PROMPT with Professional Tone
+        prompt = f"""You are writing ONE authentic Google Business review as a satisfied customer in India.
 
-CRITICAL REQUIREMENTS:
-1. Write 2-3 sentences only
-2. Must mention "{business['name']}" naturally once
-3. Must mention "{business['city']}" naturally once
-4. Sound like a real person typing casually - NOT marketing copy
-5. Use simple Indian English tone
-6. Pick ONE specific experience from their services and describe how it helped
-7. NO fixed patterns, NO repeated phrases from previous reviews
-8. Start differently each time - don't follow a template
+BUSINESS INFO:
+Name: {business['name']}
+Category: {category}
+City: {business['city']}
+Services: {services}
 
-Vary your approach - sometimes:
-- Start with the outcome/result you got
-- Start with why you went there
-- Start with what surprised you
-- Start with a recommendation
-- Start with comparing to other options
+UNIQUE SEED (use this to ensure completely different output): {unique_seed}
 
-Keep it natural, personal, and unique. No emojis, no hype words like "amazing" or "best".
+═══════════════════════════════════════════════════════════
+CRITICAL RULES - STRICT COMPLIANCE REQUIRED
+═══════════════════════════════════════════════════════════
 
-Write the review now:"""
+1. LENGTH: Exactly 3-4 sentences. Not more, not less.
+
+2. PROFESSIONAL TONE:
+   ✓ Polished, educated, mature language
+   ✓ Complete sentences with proper grammar
+   ✓ No casual slang or repetitive phrases
+   ✓ Sound like a professional person sharing genuine experience
+   ✓ Use varied vocabulary - avoid repeating same words
+
+3. MENTION REQUIREMENTS (NATURAL PLACEMENT):
+   ✓ Business name "{business['name']}" - mentioned ONCE naturally
+   ✓ City "{business['city']}" - mentioned ONCE naturally
+   ✓ Category/service - described through experience, NOT just stated
+
+4. VARIATION (EXTREMELY IMPORTANT):
+   ✗ NEVER start with "I recently visited..."
+   ✗ NEVER start with "I had..." or "I went to..."
+   ✗ NEVER use same opening pattern twice
+   ✗ NEVER follow predictable structure
+
+   ✓ Each review MUST have completely different:
+     - Opening sentence style
+     - Word choices
+     - Sentence structure
+     - Flow and rhythm
+     - Descriptive language
+
+5. SEO OPTIMIZATION (Google loves this):
+   ✓ Include location-based keywords naturally: "in {business['city']}", "near me", "local"
+   ✓ Mention specific outcomes/results from services
+   ✓ Use long-tail search phrases naturally: "best {category} for...", "reliable {category} service"
+   ✓ Include service-related keywords from: {services}
+   ✓ Add credibility markers: "professional", "expert", "experienced", "reliable"
+   ✓ Mention timeframe subtly: "recently", "last month", "this year"
+
+6. EXPERIENCE-BASED WRITING:
+   Pick ONE specific service/aspect and describe the REAL IMPACT:
+   - What problem did it solve?
+   - What result did you get?
+   - How did it help your situation?
+   - Why would you recommend it?
+
+7. OPENING VARIATIONS (Pick randomly, never repeat):
+   Style A: Start with the result/outcome
+   Style B: Start with the decision process
+   Style C: Start with comparison to alternatives
+   Style D: Start with specific service mention
+   Style E: Start with problem you had
+   Style F: Start with recommendation
+   Style G: Start with discovery/finding them
+   Style H: Start with expertise observation
+
+8. FORBIDDEN PHRASES (Never use these):
+   ❌ "I recently visited"
+   ❌ "I went to"
+   ❌ "I had a great experience"
+   ❌ "highly recommend"
+   ❌ "amazing service"
+   ❌ "best in class"
+   ❌ Any cliché marketing language
+
+9. PROFESSIONAL VOCABULARY EXAMPLES (Use varied words):
+   Instead of "good" → professional, effective, reliable, thorough, competent
+   Instead of "helped" → assisted, supported, guided, facilitated, enabled
+   Instead of "nice" → pleasant, courteous, respectful, accommodating
+   Instead of "great" → excellent, outstanding, superior, exceptional
+
+10. SENTENCE STRUCTURE VARIETY:
+    - Use different sentence lengths
+    - Mix simple and complex sentences
+    - Vary where you place the business name
+    - Change the flow completely each time
+
+11. REAL CUSTOMER LANGUAGE:
+    ✓ Mention specific details (without being fake)
+    ✓ Show genuine satisfaction through results
+    ✓ Write like someone who values their time and money
+    ✓ Be concise but meaningful
+
+═══════════════════════════════════════════════════════════
+EXAMPLES OF GOOD vs BAD (Understand the difference, DON'T COPY)
+═══════════════════════════════════════════════════════════
+
+BAD (repetitive, casual):
+"I recently visited ABC Clinic in Mumbai. They provided great service. The doctor was nice. Highly recommend!"
+
+GOOD (professional, varied, SEO-rich):
+"Finding reliable psychiatric care in Mumbai led me to Dr. ABC Wellness Center, where the comprehensive approach to anxiety management has been genuinely effective. The professional consultation addressed my concerns systematically, and the evidence-based treatment plan has shown measurable improvement over the past few months."
+
+BAD (template-like):
+"I went to XYZ Studio in Delhi for photography. They did a good job. The photos came out nice."
+
+GOOD (unique, professional, result-focused):
+"XYZ Studio in Delhi exceeded my expectations for our anniversary photoshoot. Their creative direction and attention to lighting details resulted in stunning portraits, and the post-processing work was delivered ahead of schedule with professional finesse."
+
+═══════════════════════════════════════════════════════════
+YOUR TASK
+═══════════════════════════════════════════════════════════
+
+Write ONE completely unique, professional, SEO-optimized Google review that:
+- Sounds like an educated, satisfied customer
+- Uses sophisticated but natural language
+- Includes SEO keywords organically
+- Has completely different structure from any previous review
+- Mentions business name and city naturally once each
+- Describes real impact/results from the service
+
+OUTPUT FORMAT:
+Return ONLY the review text. No quotes. No extra explanation. No formatting.
+
+Begin now:"""
 
         try:
-            response = model.generate_content(prompt)
+            response = model.generate_content(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    temperature=1.2,  # Higher creativity
+                    top_p=0.95,
+                    top_k=50,
+                    max_output_tokens=200,
+                )
+            )
             review = response.text.strip()
-            # Remove quotes if AI added them
-            review = review.strip('"').strip("'")
-            # Clean special characters but keep natural punctuation
-            review = re.sub(r'[^\w\s.,!?\'-]', '', review)
+
+            # Clean up the review
+            review = review.strip('"').strip("'").strip('`')
+            review = review.replace('\n', ' ').replace('  ', ' ')
+
+            # Remove any markdown or formatting
+            review = re.sub(r'\*\*', '', review)
+            review = re.sub(r'__', '', review)
+
+            # Ensure proper punctuation
+            if not review.endswith('.'):
+                review += '.'
+
+            # Final quality check - if too short or too long, regenerate with fallback
+            word_count = len(review.split())
+            if word_count < 30 or word_count > 100:
+                review = f"The professional service at {business['name']} in {business['city']} has consistently delivered excellent results for {category} needs. Their systematic approach and expertise in {services.split(',')[0].strip()} made a significant difference. The quality of work and attention to detail reflects their commitment to client satisfaction."
+
         except Exception as e:
-            review = f"Had a good experience with {business['name']} in {business['city']}. They provided helpful {category} services and I'm satisfied with the results."
-        
+            # Professional fallback review
+            review = f"Seeking reliable {category} services in {business['city']} led me to {business['name']}, where the professional approach and expertise in {services.split(',')[0].strip() if services else category} delivered exceptional results. The systematic process and quality standards exceeded my expectations."
+
         place_id_url = get_google_review_url(business.get('place_id', ''), business.get('name', ''), business.get('city', ''))
         return jsonify({'review': review, 'google_link': place_id_url})
     except Exception as e:
