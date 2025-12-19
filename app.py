@@ -179,8 +179,11 @@ def generate_review_route(slug):
         if business['credit_balance'] <= 0:
             place_id_url = get_google_review_url(business.get('place_id', ''), business.get('name', ''), business.get('city', ''))
             return jsonify({'review': 'Credits finished. Please contact DAN AI to recharge.', 'google_link': place_id_url}), 200
+        
+        # Deduct credit
         db.collection('businesses').document(slug).update({'credit_balance': firestore.Increment(-1)})
         db.collection('review_logs').add({'business_slug': slug, 'timestamp': firestore.SERVER_TIMESTAMP, 'ai_used': True})
+        
         category = business.get("category", "service")
         custom_services = business.get("services", "").strip()
         if custom_services:
@@ -188,116 +191,45 @@ def generate_review_route(slug):
         else:
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
-        prompt = f"""
-You are generating ONE genuine Google Business review written by a real Indian customer.
+        # NEW IMPROVED PROMPT - More variation, less structure
+        prompt = f"""Write a genuine Google review from a real customer in India about their experience.
 
-The review must sound natural, personal, and unplanned — like someone typing from real experience.
-Do NOT sound like an advertisement.
-Do NOT follow a fixed structure.
+Business: {business['name']}
+Type: {category}
+Location: {business['city']}
+What they offer: {services}
 
-BUSINESS DETAILS:
-- Name: {business['name']}
-- Category: {category}
-- City: {business['city']}
-- Services: {services}
+CRITICAL REQUIREMENTS:
+1. Write 2-3 sentences only
+2. Must mention "{business['name']}" naturally once
+3. Must mention "{business['city']}" naturally once
+4. Sound like a real person typing casually - NOT marketing copy
+5. Use simple Indian English tone
+6. Pick ONE specific experience from their services and describe how it helped
+7. NO fixed patterns, NO repeated phrases from previous reviews
+8. Start differently each time - don't follow a template
 
----------------------------------------
-STRICT RULES (VERY IMPORTANT)
----------------------------------------
-1. Write ONLY 2–3 natural sentences.
-2. Do NOT start with the business name or the city.
-3. Mention the business name EXACTLY once.
-4. Mention the city EXACTLY once.
-5. Mention the category ONLY indirectly (never repeat fixed phrases).
-6. Convert services into real-life experiences — NEVER list services.
-7. Keep simple Indian English (calm, polite, everyday tone).
-8. No emojis, no exclamation marks.
-9. No hype words like wow, amazing, best, honestly.
-10. Every review must feel different from the previous one.
+Vary your approach - sometimes:
+- Start with the outcome/result you got
+- Start with why you went there
+- Start with what surprised you
+- Start with a recommendation
+- Start with comparing to other options
 
----------------------------------------
-HOW TO USE SERVICES (CRITICAL)
----------------------------------------
-From the provided services, PICK ONLY ONE OR TWO ideas
-and convert them into a HUMAN EXPERIENCE.
+Keep it natural, personal, and unique. No emojis, no hype words like "amazing" or "best".
 
-Examples (DO NOT COPY, JUST UNDERSTAND):
-- psychiatrist → feeling anxious, habit issues, low mood, stress
-- clinic → calm discussion, clear guidance, clean environment
-- restaurant → food taste, service speed, comfort
-- hotel → clean room, quiet stay, helpful staff
-- salon → neat results, hygiene, relaxed feel
-- gym → trainer support, consistency, energy
-- marketing agency → better visibility, leads, communication
-- photography → quality output, coordination, delivery
+Write the review now:"""
 
-NEVER mention service names directly.
-ALWAYS describe how it felt for the customer.
-
----------------------------------------
-OPENING (RANDOM, NATURAL – PICK ONE STYLE)
----------------------------------------
-- A few things needed sorting out.
-- Things didn’t feel clear at first.
-- Someone I trust suggested this place.
-- I decided to get some proper guidance.
-- I was looking for a clearer way forward.
-- It felt like the right time to get help.
-- I wanted to understand things better.
-- Things were getting a bit difficult.
-- I needed a different perspective.
-- I chose to approach this calmly.
-
----------------------------------------
-BUSINESS NAME RULE
----------------------------------------
-Mention {business['name']} EXACTLY once,
-in sentence 2 or 3, naturally.
-
-Examples:
-- Talking to {business['name']} helped…
-- The guidance at {business['name']} felt…
-- Visiting {business['name']} made things clearer…
-
----------------------------------------
-CITY RULE
----------------------------------------
-Mention {business['city']} EXACTLY once,
-separate from the business name.
-
-Examples:
-- here in {business['city']}
-- around {business['city']}
-- in this part of {business['city']}
-
----------------------------------------
-ENDING (PICK ONE, KEEP IT SIMPLE)
----------------------------------------
-- Things feel easier to manage now.
-- I’m feeling more settled now.
-- It helped me think clearly.
-- It’s been steady and helpful.
-- It made a difference for me.
-- I feel more confident now.
-- It worked well for my situation.
-- Glad I went ahead with this.
-
----------------------------------------
-FINAL OUTPUT RULE
----------------------------------------
-Return ONLY the final review text.
-No quotes.
-No explanations.
-No formatting.
-"""
         try:
             response = model.generate_content(prompt)
             review = response.text.strip()
-            review = re.sub(r"[^a-zA-Z0-9.,'\s]", "", review)  # Hard clean special chars
+            # Remove quotes if AI added them
+            review = review.strip('"').strip("'")
+            # Clean special characters but keep natural punctuation
+            review = re.sub(r'[^\w\s.,!?\'-]', '', review)
         except Exception as e:
-            review = f"{business['name']} is an excellent {business['category']} in {business['city']}. Their services are highly recommended."
-        allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,' "
-        review = "".join(c for c in review if c in allowed)
+            review = f"Had a good experience with {business['name']} in {business['city']}. They provided helpful {category} services and I'm satisfied with the results."
+        
         place_id_url = get_google_review_url(business.get('place_id', ''), business.get('name', ''), business.get('city', ''))
         return jsonify({'review': review, 'google_link': place_id_url})
     except Exception as e:
