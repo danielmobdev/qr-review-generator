@@ -192,218 +192,135 @@ def generate_review_route(slug):
         else:
             services = CATEGORY_CONTEXT.get(category.lower(), CATEGORY_CONTEXT["default"])
 
-        # Generate unique seed for maximum variation
+        # Generate unique seed for each request to force variation
         timestamp = datetime.now().isoformat()
         device_id = request.headers.get('User-Agent', 'unknown')
-        ip_hash = hashlib.md5(request.remote_addr.encode()).hexdigest() if request.remote_addr else 'local'
-        unique_seed = hashlib.md5(f"{slug}{timestamp}{device_id}{ip_hash}{random.randint(1000,9999)}".encode()).hexdigest()
+        unique_seed = hashlib.md5(f"{slug}{timestamp}{device_id}{random.random()}".encode()).hexdigest()
 
-        # ULTIMATE 2025 SEO-OPTIMIZED PROMPT
-        # Based on research: 100+ words (ideally 200+ characters) stay at top longer, more visibility
-        prompt = f"""You are writing ONE authentic Google Business review as a real Indian customer.
+        # ADVANCED SEO-OPTIMIZED PROMPT with Professional Tone
+        prompt = f"""You are writing ONE authentic Google Business review as a satisfied customer in India.
 
-BUSINESS DETAILS:
+BUSINESS INFO:
 Name: {business['name']}
 Category: {category}
 City: {business['city']}
-Services Available: {services}
+Services: {services}
 
-UNIQUENESS SEED: {unique_seed}
-(This seed MUST influence your word choices, sentence structure, and approach to create completely different output)
+UNIQUE SEED (use this to ensure completely different output): {unique_seed}
 
-═══════════════════════════════════════════════════════════════════════════
-GOOGLE 2025 SEO OPTIMIZATION REQUIREMENTS (PROVEN BY RESEARCH)
-═══════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════
+CRITICAL RULES - STRICT COMPLIANCE REQUIRED
+═══════════════════════════════════════════════════════════
 
-📊 LENGTH REQUIREMENT (CRITICAL FOR SEO):
-✓ TARGET: 100-150 words (this is the SWEET SPOT for Google ranking)
-✓ MINIMUM: 75 words (never go below this)
-✓ Research proves: Reviews 100+ words stay at top of listings LONGER
-✓ Character count: Aim for 200+ characters minimum
+1. LENGTH: Exactly 3-4 sentences. Not more, not less.
 
-WHY THIS LENGTH MATTERS:
-• Longer reviews rank higher in "Most Relevant" section
-• Google's algorithm favors detailed, informative reviews
-• More visibility = more impact on local SEO
-• 5-star reviews average 74 words, but 100+ gets better placement
+2. PROFESSIONAL TONE:
+   ✓ Polished, educated, mature language
+   ✓ Complete sentences with proper grammar
+   ✓ No casual slang or repetitive phrases
+   ✓ Sound like a professional person sharing genuine experience
+   ✓ Use varied vocabulary - avoid repeating same words
 
-═══════════════════════════════════════════════════════════════════════════
-SEO KEYWORD INTEGRATION (NATURAL & ORGANIC)
-═══════════════════════════════════════════════════════════════════════════
+3. MENTION REQUIREMENTS (NATURAL PLACEMENT):
+   ✓ Business name "{business['name']}" - mentioned ONCE naturally
+   ✓ City "{business['city']}" - mentioned ONCE naturally
+   ✓ Category/service - described through experience, NOT just stated
 
-MUST INCLUDE (distributed naturally across the review):
+4. VARIATION (EXTREMELY IMPORTANT):
+   ✗ NEVER start with "I recently visited..."
+   ✗ NEVER start with "I had..." or "I went to..."
+   ✗ NEVER use same opening pattern twice
+   ✗ NEVER follow predictable structure
 
-1. BUSINESS NAME: "{business['name']}" - mention ONCE, naturally placed
+   ✓ Each review MUST have completely different:
+     - Opening sentence style
+     - Word choices
+     - Sentence structure
+     - Flow and rhythm
+     - Descriptive language
 
-2. LOCATION KEYWORDS (pick 2-3 variations):
-   ✓ "in {business['city']}"
-   ✓ "near me in {business['city']}"
-   ✓ "around {business['city']}"
-   ✓ "{business['city']} area"
-   ✓ "local {category} in {business['city']}"
+5. SEO OPTIMIZATION (Google loves this):
+   ✓ Include location-based keywords naturally: "in {business['city']}", "near me", "local"
+   ✓ Mention specific outcomes/results from services
+   ✓ Use long-tail search phrases naturally: "best {category} for...", "reliable {category} service"
+   ✓ Include service-related keywords from: {services}
+   ✓ Add credibility markers: "professional", "expert", "experienced", "reliable"
+   ✓ Mention timeframe subtly: "recently", "last month", "this year"
 
-3. CATEGORY KEYWORDS (use variations, not exact):
-   ✓ Primary: {category}
-   ✓ Related searches: "best {category}", "reliable {category}", "professional {category}"
-   ✓ Long-tail: "{category} services", "{category} expert"
+6. EXPERIENCE-BASED WRITING:
+   Pick ONE specific service/aspect and describe the REAL IMPACT:
+   - What problem did it solve?
+   - What result did you get?
+   - How did it help your situation?
+   - Why would you recommend it?
 
-4. SERVICE-SPECIFIC KEYWORDS (from services list):
-   Pick 2-3 specific services from: {services}
-   Mention them as RESULTS/EXPERIENCES, not just list them
+7. OPENING VARIATIONS (Pick randomly, never repeat):
+   Style A: Start with the result/outcome
+   Style B: Start with the decision process
+   Style C: Start with comparison to alternatives
+   Style D: Start with specific service mention
+   Style E: Start with problem you had
+   Style F: Start with recommendation
+   Style G: Start with discovery/finding them
+   Style H: Start with expertise observation
 
-5. CREDIBILITY MARKERS (use 2-3):
-   professional, expert, experienced, reliable, thorough, effective, quality,
-   systematic, comprehensive, skilled, knowledgeable, competent
+8. FORBIDDEN PHRASES (Never use these):
+   ❌ "I recently visited"
+   ❌ "I went to"
+   ❌ "I had a great experience"
+   ❌ "highly recommend"
+   ❌ "amazing service"
+   ❌ "best in class"
+   ❌ Any cliché marketing language
 
-6. OUTCOME WORDS (include 1-2):
-   results, improvement, difference, impact, change, progress, outcome,
-   success, benefit, solution, helped, resolved
+9. PROFESSIONAL VOCABULARY EXAMPLES (Use varied words):
+   Instead of "good" → professional, effective, reliable, thorough, competent
+   Instead of "helped" → assisted, supported, guided, facilitated, enabled
+   Instead of "nice" → pleasant, courteous, respectful, accommodating
+   Instead of "great" → excellent, outstanding, superior, exceptional
 
-7. SEARCH INTENT PHRASES (naturally embed 1-2):
-   "looking for {category} in {business['city']}"
-   "needed {category} services"
-   "searching for reliable {category}"
-   "wanted professional help with"
+10. SENTENCE STRUCTURE VARIETY:
+    - Use different sentence lengths
+    - Mix simple and complex sentences
+    - Vary where you place the business name
+    - Change the flow completely each time
 
-═══════════════════════════════════════════════════════════════════════════
-REVIEW STRUCTURE (100-150 WORDS FORMAT)
-═══════════════════════════════════════════════════════════════════════════
+11. REAL CUSTOMER LANGUAGE:
+    ✓ Mention specific details (without being fake)
+    ✓ Show genuine satisfaction through results
+    ✓ Write like someone who values their time and money
+    ✓ Be concise but meaningful
 
-PARAGRAPH 1 (35-50 words):
-• Start with WHY you needed the service (problem/situation)
-• Include search intent phrase naturally
-• Mention location and how you found them
-• Set context for the experience
+═══════════════════════════════════════════════════════════
+EXAMPLES OF GOOD vs BAD (Understand the difference, DON'T COPY)
+═══════════════════════════════════════════════════════════
 
-PARAGRAPH 2 (40-60 words):
-• Describe the SPECIFIC service/experience in detail
-• Mention business name naturally
-• Include 2-3 service-related keywords
-• Talk about the professional approach/process
-• Add credibility markers
+BAD (repetitive, casual):
+"I recently visited ABC Clinic in Mumbai. They provided great service. The doctor was nice. Highly recommend!"
 
-PARAGRAPH 3 (25-40 words):
-• Focus on RESULTS and OUTCOMES achieved
-• Include category keyword variation
-• Add timeframe if relevant (recently, last month, etc.)
-• End with natural recommendation
-• Show genuine satisfaction
+GOOD (professional, varied, SEO-rich):
+"Finding reliable psychiatric care in Mumbai led me to Dr. ABC Wellness Center, where the comprehensive approach to anxiety management has been genuinely effective. The professional consultation addressed my concerns systematically, and the evidence-based treatment plan has shown measurable improvement over the past few months."
 
-═══════════════════════════════════════════════════════════════════════════
-TONE & LANGUAGE RULES
-═══════════════════════════════════════════════════════════════════════════
+BAD (template-like):
+"I went to XYZ Studio in Delhi for photography. They did a good job. The photos came out nice."
 
-PROFESSIONAL BUT CONVERSATIONAL:
-✓ Simple Indian English (everyday language, not formal)
-✓ First-person perspective (I, my, me)
-✓ Past tense for experiences
-✓ Present tense for results/current state
-✓ Clear, direct sentences
-✓ Genuine and sincere tone
+GOOD (unique, professional, result-focused):
+"XYZ Studio in Delhi exceeded my expectations for our anniversary photoshoot. Their creative direction and attention to lighting details resulted in stunning portraits, and the post-processing work was delivered ahead of schedule with professional finesse."
 
-FORBIDDEN WORDS/PHRASES (NEVER USE):
-❌ "I recently visited" or "I went to"
-❌ "amazing", "fantastic", "awesome", "incredible"
-❌ "highly recommend" (use natural alternatives)
-❌ "best ever", "life-changing"
-❌ "honestly", "literally"
-❌ Emojis or exclamation marks
-❌ Marketing buzzwords
-❌ Repetitive patterns from previous reviews
+═══════════════════════════════════════════════════════════
+YOUR TASK
+═══════════════════════════════════════════════════════════
 
-APPROVED VOCABULARY (Use varied combinations):
-✓ Adjectives: professional, reliable, effective, thorough, systematic, clear, helpful,
-  patient, knowledgeable, experienced, skilled, competent, attentive, responsive
+Write ONE completely unique, professional, SEO-optimized Google review that:
+- Sounds like an educated, satisfied customer
+- Uses sophisticated but natural language
+- Includes SEO keywords organically
+- Has completely different structure from any previous review
+- Mentions business name and city naturally once each
+- Describes real impact/results from the service
 
-✓ Outcome verbs: helped, improved, resolved, addressed, clarified, guided, supported,
-  facilitated, enabled, achieved, delivered, provided
-
-✓ Experience words: consultation, guidance, approach, process, treatment, service,
-  discussion, assessment, analysis, strategy, plan
-
-═══════════════════════════════════════════════════════════════════════════
-VARIATION STRATEGIES (FORCE UNIQUENESS)
-═══════════════════════════════════════════════════════════════════════════
-
-Based on SEED {unique_seed}, RANDOMIZE:
-
-OPENING STYLE (Pick ONE, never repeat):
-A) Start with the problem/need
-B) Start with discovery/search process
-C) Start with decision to seek help
-D) Start with someone's recommendation
-E) Start with comparison to other options
-F) Start with initial hesitation/concern
-G) Start with specific situation/context
-H) Start with timeframe reference
-
-MIDDLE FLOW (Pick ONE):
-A) Chronological: First visit → Process → Follow-up
-B) Thematic: Service quality → Professional approach → Results
-C) Comparative: Expected vs Actual experience
-D) Problem-Solution: Challenge → How they helped → Outcome
-E) Detailed: Specific aspects → Overall impression → Impact
-
-ENDING STYLE (Pick ONE):
-A) Result-focused conclusion
-B) Future commitment (will continue/return)
-C) Recommendation with specific reason
-D) Gratitude with outcome mention
-E) Current state/improvement description
-
-SENTENCE VARIETY:
-- Mix short (5-8 words) and longer sentences (15-20 words)
-- Use 2-3 compound sentences with "and", "but", "while"
-- Include 1-2 complex sentences with context
-- Vary where business name appears (early/middle/late)
-
-═══════════════════════════════════════════════════════════════════════════
-SPECIFIC EXAMPLES BY CATEGORY (UNDERSTAND, DON'T COPY)
-═══════════════════════════════════════════════════════════════════════════
-
-DOCTOR/PSYCHIATRIST/CLINIC:
-"I was dealing with persistent anxiety and sleep issues when I started searching for professional help in {{city}}. A colleague mentioned {{business name}}, and their approach to mental health care proved to be exactly what I needed. The consultation was thorough and unhurried, focusing on understanding my specific situation rather than offering generic solutions. Dr. {{name}} took time to explain different treatment options and helped me develop practical coping strategies. Over the past three months, I've noticed significant improvement in managing daily stress and my sleep patterns have normalized considerably. The clinic environment is calm and private, which helps during sessions. For anyone looking for genuine psychiatric care in {{city}} that combines professional expertise with a patient-centered approach, this has been the right choice. The systematic method and clear communication made the entire process feel manageable and effective."
-
-RESTAURANT:
-"Finding authentic North Indian cuisine in {{city}} had been a challenge until someone recommended {{business name}} during a work lunch discussion. What stands out immediately is their attention to flavor balance and spice levels. We tried their butter chicken and dal makhani, both prepared with techniques that brought out authentic taste without overwhelming heat. The paneer was fresh and the naan came straight from the tandoor. Service was prompt without being rushed, and the staff actually asked about spice preferences rather than assuming. The portion sizes were generous and pricing felt reasonable for the quality delivered. We've been back twice in the past month, and consistency has been maintained across visits. The ambience is simple but clean, with comfortable seating and good ventilation. For reliable Indian food in {{city}} that doesn't compromise on authentic preparation methods, this place delivers on expectations. The kitchen clearly understands regional cooking styles and maintains quality standards."
-
-DIGITAL MARKETING/SEO:
-"Our small business struggled with online visibility for over a year despite having a decent website and social media presence. We researched several marketing agencies in {{city}} before connecting with {{business name}}, and their data-driven approach to digital strategy made sense from the first discussion. Rather than promising overnight results, they conducted a thorough audit of our current online assets and identified specific gaps in our SEO and Google Business optimization. Over the following three months, they implemented systematic improvements to our content structure, local search presence, and ad targeting. We saw measurable increases in website traffic and the quality of leads improved noticeably. The team provided regular updates with clear analytics and explained changes in terms we could understand. Their expertise in local SEO particularly helped our {{city}} market visibility. The results justified the investment, and we've continued working with them for six months now. For businesses in {{city}} needing practical digital marketing support backed by actual performance metrics, their professional and transparent approach delivers consistent value."
-
-═══════════════════════════════════════════════════════════════════════════
-FINAL QUALITY CHECKLIST
-═══════════════════════════════════════════════════════════════════════════
-
-Before generating, verify:
-☑ Word count: 100-150 words (count carefully)
-☑ Business name mentioned exactly once
-☑ City mentioned 1-2 times naturally
-☑ Category keywords integrated (not forced)
-☑ 2-3 specific services described as experiences
-☑ At least 2 credibility markers included
-☑ Outcome/result clearly stated
-☑ No forbidden phrases used
-☑ No repetitive patterns from typical reviews
-☑ Sounds genuinely human and personal
-☑ Professional but conversational tone
-☑ Location keywords naturally embedded
-☑ Search intent phrases included
-☑ Clear paragraph structure (3 sections)
-
-═══════════════════════════════════════════════════════════════════════════
-YOUR TASK NOW
-═══════════════════════════════════════════════════════════════════════════
-
-Write ONE unique, SEO-optimized Google review that:
-• Is 100-150 words (this is critical for Google ranking)
-• Uses the unique seed to force completely different structure
-• Includes all SEO elements naturally
-• Tells a genuine, detailed story
-• Provides specific value to future readers
-• Ranks high in Google's "Most Relevant" algorithm
-
-OUTPUT ONLY THE REVIEW TEXT.
-No quotes. No explanation. No formatting. Just the review.
+OUTPUT FORMAT:
+Return ONLY the review text. No quotes. No explanation. No formatting.
 
 Begin now:"""
 
