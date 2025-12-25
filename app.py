@@ -146,7 +146,40 @@ UNIQUE_OPENINGS = [
 ]
 
 def slugify(name):
-    return re.sub(r'[^a-z0-9-]', '', name.lower().replace(' ', '-').replace('&', 'and'))
+    """
+    Generate a secure, hard-to-guess slug that includes business name but adds entropy.
+    Format: [first-2-3-words]-[hash]-[random-suffix]
+    """
+    # Clean the name
+    clean_name = re.sub(r'[^a-zA-Z0-9\s]', '', name.lower().strip())
+
+    # Get first 2-3 meaningful words (max 20 chars total for readability)
+    words = clean_name.split()
+    if len(words) >= 3:
+        # Take first 3 words if business name is long
+        base_words = words[:3]
+    elif len(words) >= 2:
+        # Take first 2 words
+        base_words = words[:2]
+    else:
+        # Take first word
+        base_words = words[:1]
+
+    # Create base slug from words
+    base_slug = '-'.join(base_words)
+
+    # Create a hash of the full business name + salt for uniqueness
+    salt = "danai-qr-2025"  # Fixed salt for consistency
+    hash_input = f"{name.lower().strip()}{salt}"
+    hash_digest = hashlib.sha256(hash_input.encode()).hexdigest()[:8]  # First 8 chars of hash
+
+    # Add a random 3-character suffix for extra entropy
+    random_suffix = ''.join(random.choices('abcdefghjkmnpqrstuvwxyz23456789', k=3))
+
+    # Combine: base-words + hash + random-suffix
+    secure_slug = f"{base_slug}-{hash_digest}-{random_suffix}"
+
+    return secure_slug
 
 def is_valid_place_id(place_id):
     if not place_id or not isinstance(place_id, str):
