@@ -255,7 +255,7 @@ def serve_qr(slug):
         doc = db.collection('businesses').document(slug).get()
         if doc.exists:
             business = doc.to_dict()
-            hosting_domain = os.getenv('FIREBASE_HOSTING_DOMAIN', 'qr-review-generator.onrender.com')
+            hosting_domain = os.getenv('FIREBASE_HOSTING_DOMAIN', 'app.danai.in')
             url = f"https://{hosting_domain}/r/{slug}"
             generate_qr(slug, url)
             return send_from_directory('static', f'qr_{slug}.png')
@@ -415,7 +415,7 @@ def add_business():
             'created_at': firestore.SERVER_TIMESTAMP
         }
         db.collection('businesses').document(slug).set(business)
-        hosting_domain = os.getenv('FIREBASE_HOSTING_DOMAIN', 'qr-review-generator.onrender.com')
+        hosting_domain = os.getenv('FIREBASE_HOSTING_DOMAIN', 'app.danai.in')
         url = f"https://{hosting_domain}/r/{slug}"
         qr_url = generate_qr(slug, url)
         return jsonify({'slug': slug, 'qr_url': qr_url, 'url': url})

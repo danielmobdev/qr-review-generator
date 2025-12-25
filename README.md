@@ -117,7 +117,7 @@ A Flask-based SaaS application that generates AI-powered Google reviews using QR
      --platform managed \
      --region asia-south1 \
      --allow-unauthenticated \
-     --set-env-vars="FIREBASE_SERVICE_ACCOUNT_KEY_BASE64=your_base64,FIREBASE_HOSTING_DOMAIN=your-domain.onrender.com,GEMINI_API_KEY=your_key,RAZORPAY_KEY_ID=your_id,RAZORPAY_KEY_SECRET=your_secret,RAZORPAY_WEBHOOK_SECRET=your_webhook_secret,FLASK_SECRET_KEY=your_flask_secret"
+     --set-env-vars="FIREBASE_SERVICE_ACCOUNT_KEY_BASE64=your_base64,FIREBASE_HOSTING_DOMAIN=app.danai.in,GEMINI_API_KEY=your_key,RAZORPAY_KEY_ID=your_id,RAZORPAY_KEY_SECRET=your_secret,RAZORPAY_WEBHOOK_SECRET=your_webhook_secret,FLASK_SECRET_KEY=your_flask_secret"
    ```
 
 2. **Update webhook URL** in Razorpay dashboard with your Cloud Run URL
