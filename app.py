@@ -484,16 +484,23 @@ def get_business_payments(slug):
         return jsonify({'error': 'Database not available'}), 503
 
     try:
-        payments = db.collection('payments').where('slug', '==', slug).order_by('timestamp', direction=firestore.Query.DESCENDING).stream()
+        # Get all payments and filter by slug in Python to avoid composite index requirement
+        payments = db.collection('payments').stream()
         data = []
         for payment in payments:
             p = payment.to_dict()
-            data.append({
-                'credits': p.get('credits', 0),
-                'amount': p.get('amount', 0),
-                'unit_price': p.get('unit_price', 0),
-                'timestamp': p.get('timestamp').isoformat() if p.get('timestamp') else None
-            })
+            if p.get('slug') == slug:  # Filter by slug in Python
+                data.append({
+                    'credits': p.get('credits', 0),
+                    'amount': p.get('amount', 0),
+                    'unit_price': p.get('unit_price', 0),
+                    'timestamp': p.get('timestamp').isoformat() if p.get('timestamp') else None,
+                    'razorpay_payment_id': p.get('razorpay_payment_id', '')
+                })
+
+        # Sort by timestamp descending in Python
+        data.sort(key=lambda x: x['timestamp'] or '', reverse=True)
+
         return jsonify(data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
