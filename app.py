@@ -29,30 +29,45 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
 app.permanent_session_lifetime = timedelta(hours=1)
 
-# Firebase init (Safe for Render + Base64 + No Double Init)
+# Firebase init (Conditional for Cloud Run)
+firebase_initialized = False
 if not firebase_admin._apps:
     raw = os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY") or os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY_BASE64")
 
-    if not raw:
-        raise ValueError("Firebase not initialized. Check FIREBASE_SERVICE_ACCOUNT_KEY or BASE64")
+    if raw:
+        try:
+            # Try Base64 first, fallback to plain JSON
+            try:
+                decoded = base64.b64decode(raw).decode("utf-8")
+                cred_dict = json.loads(decoded)
+            except Exception:
+                cred_dict = json.loads(raw)
 
-    # Try Base64 first, fallback to plain JSON
-    try:
-        decoded = base64.b64decode(raw).decode("utf-8")
-        cred_dict = json.loads(decoded)
-    except Exception:
-        cred_dict = json.loads(raw)
+            cred = credentials.Certificate(cred_dict)
+            firebase_admin.initialize_app(cred)
+            firebase_initialized = True
+            print("Firebase initialized successfully")
+        except Exception as e:
+            print(f"Firebase initialization failed: {e}")
+    else:
+        print("Firebase service account key not provided - Firestore features disabled")
 
-    cred = credentials.Certificate(cred_dict)
-    firebase_admin.initialize_app(cred)
-
-db = firestore.client()
+if firebase_initialized:
+    db = firestore.client()
+else:
+    db = None
 
 # Ensure static directory exists for QR codes
 os.makedirs("static", exist_ok=True)
 
-genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
-model = genai.GenerativeModel('gemini-2.0-flash-exp')
+gemini_api_key = os.getenv('GEMINI_API_KEY')
+if gemini_api_key:
+    genai.configure(api_key=gemini_api_key)
+    model = genai.GenerativeModel('gemini-2.0-flash-exp')
+    print("Gemini AI initialized successfully")
+else:
+    model = None
+    print("Gemini API key not provided - AI review generation disabled")
 
 CATEGORY_CONTEXT = {
     "ai digital marketing": "SEO, Google Business optimization, online ads, lead generation, social media promotion",
@@ -164,6 +179,9 @@ def index():
 
 @app.route('/r/<slug>')
 def review_page(slug):
+    if not db:
+        return "Database not available", 503
+
     doc = db.collection('businesses').document(slug).get()
     if not doc.exists:
         return "Business not found", 404
@@ -176,6 +194,9 @@ def review_page(slug):
 
 @app.route("/recharge/<slug>")
 def recharge_page(slug):
+    if not db:
+        return "Database not available", 503
+
     doc = db.collection("businesses").document(slug).get()
     if not doc.exists:
         return "Business not found", 404
@@ -191,6 +212,9 @@ def admin():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        if not db:
+            return render_template('login.html', error='Database not available')
+
         username = request.form.get('username')
         password = request.form.get('password')
 
@@ -219,6 +243,9 @@ def logout():
 
 @app.route('/qr/<slug>')
 def serve_qr(slug):
+    if not db:
+        return 'Database not available', 503
+
     path = f'static/qr_{slug}.png'
     if os.path.exists(path):
         return send_from_directory('static', f'qr_{slug}.png')
@@ -235,6 +262,11 @@ def serve_qr(slug):
 
 @app.route('/generate-review/<slug>')
 def generate_review_route(slug):
+    if not db:
+        return jsonify({'error': 'Database not available'}), 503
+    if not model:
+        return jsonify({'error': 'AI service not available'}), 503
+
     try:
         doc = db.collection('businesses').document(slug).get()
         if not doc.exists:
@@ -324,6 +356,9 @@ Return only the complete review text."""
 
 @app.route('/api/businesses', methods=['GET'])
 def get_businesses():
+    if not db:
+        return jsonify({'error': 'Database not available'}), 503
+
     businesses = db.collection('businesses').stream()
     data = []
     for doc in businesses:
@@ -334,6 +369,9 @@ def get_businesses():
 
 @app.route('/api/businesses/<slug>', methods=['GET'])
 def get_business(slug):
+    if not db:
+        return jsonify({'error': 'Database not available'}), 503
+
     try:
         doc = db.collection('businesses').document(slug).get()
         if doc.exists:
@@ -347,6 +385,9 @@ def get_business(slug):
 
 @app.route('/api/businesses', methods=['POST'])
 def add_business():
+    if not db:
+        return jsonify({'error': 'Database not available'}), 503
+
     try:
         data = request.json
         name = data['name']
@@ -381,6 +422,9 @@ def add_business():
 
 @app.route('/api/businesses/<slug>', methods=['PUT'])
 def update_business(slug):
+    if not db:
+        return jsonify({'error': 'Database not available'}), 503
+
     data = request.json
     if 'place_id' in data:
         place_id = data.get('place_id', '')
@@ -391,6 +435,9 @@ def update_business(slug):
 
 @app.route('/api/businesses/<slug>/recharge', methods=['POST'])
 def recharge_business(slug):
+    if not db:
+        return jsonify({'error': 'Database not available'}), 503
+
     data = request.json
     credits = data['credits']
     db.collection('businesses').document(slug).update({'credit_balance': firestore.Increment(credits)})
@@ -398,6 +445,9 @@ def recharge_business(slug):
 
 @app.route('/api/businesses/<slug>/payments', methods=['GET'])
 def get_business_payments(slug):
+    if not db:
+        return jsonify({'error': 'Database not available'}), 503
+
     try:
         payments = db.collection('payments').where('slug', '==', slug).order_by('timestamp', direction=firestore.Query.DESCENDING).stream()
         data = []
@@ -415,6 +465,9 @@ def get_business_payments(slug):
 
 @app.route('/api/businesses/<slug>', methods=['DELETE'])
 def delete_business(slug):
+    if not db:
+        return jsonify({'error': 'Database not available'}), 503
+
     try:
         db.collection('businesses').document(slug).delete()
         qr_path = f'static/qr_{slug}.png'
@@ -426,6 +479,8 @@ def delete_business(slug):
 
 @app.route("/api/payment/create-order", methods=["POST"])
 def create_payment_order():
+    if not db:
+        return jsonify({"error": "Database not available"}), 503
     if not razor_client:
         return jsonify({"error": "Razorpay not configured"}), 500
 
@@ -446,6 +501,8 @@ def create_payment_order():
 
 @app.route("/api/payment/verify", methods=["POST"])
 def verify_payment():
+    if not db:
+        return jsonify({"error": "Database not available"}), 503
     if not razor_client:
         return jsonify({"error": "Razorpay not configured"}), 500
 
