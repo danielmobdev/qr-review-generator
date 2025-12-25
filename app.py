@@ -17,6 +17,14 @@ RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 RAZORPAY_WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET")
 
+# Initialize Razorpay client
+if RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET:
+    razor_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+    print("Razorpay client initialized successfully")
+else:
+    razor_client = None
+    print("Razorpay client not initialized - missing environment variables")
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
 app.permanent_session_lifetime = timedelta(hours=1)
@@ -418,6 +426,9 @@ def delete_business(slug):
 
 @app.route("/api/payment/create-order", methods=["POST"])
 def create_payment_order():
+    if not razor_client:
+        return jsonify({"error": "Razorpay not configured"}), 500
+
     data = request.json
     slug = data.get("slug")
     credits = int(data.get("credits", 0))
@@ -435,6 +446,9 @@ def create_payment_order():
 
 @app.route("/api/payment/verify", methods=["POST"])
 def verify_payment():
+    if not razor_client:
+        return jsonify({"error": "Razorpay not configured"}), 500
+
     data = request.json
     payment_id = data.get("payment_id")
     order_id = data.get("order_id")
