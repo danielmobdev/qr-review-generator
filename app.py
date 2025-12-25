@@ -29,33 +29,35 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
 app.permanent_session_lifetime = timedelta(hours=1)
 
-# Firebase init (Conditional for Cloud Run)
-firebase_initialized = False
-if not firebase_admin._apps:
-    raw = os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY") or os.environ.get("FIREBASE_SERVICE_ACCOUNT_KEY_BASE64")
+print("\n🔍 Firebase Startup Log:")
+raw = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY_BASE64")
 
-    if raw:
-        try:
-            # Try Base64 first, fallback to plain JSON
-            try:
-                decoded = base64.b64decode(raw).decode("utf-8")
-                cred_dict = json.loads(decoded)
-            except Exception:
-                cred_dict = json.loads(raw)
-
-            cred = credentials.Certificate(cred_dict)
-            firebase_admin.initialize_app(cred)
-            firebase_initialized = True
-            print("Firebase initialized successfully")
-        except Exception as e:
-            print(f"Firebase initialization failed: {e}")
-    else:
-        print("Firebase service account key not provided - Firestore features disabled")
-
-if firebase_initialized:
-    db = firestore.client()
+if not raw:
+    print("❌ No FIREBASE_SERVICE_ACCOUNT_KEY_BASE64 found in environment variables.")
 else:
-    db = None
+    print("📦 Key found in environment variables. Attempting decode...")
+
+try:
+    decoded = base64.b64decode(raw).decode("utf-8")
+    cred_dict = json.loads(decoded)
+    print("🎯 Base64 decoded successfully.")
+    print(f"📌 project_id in key: {cred_dict.get('project_id')}")
+    
+    if not firebase_admin._apps:
+        cred = credentials.Certificate(cred_dict)
+        firebase_admin.initialize_app(cred)
+        print("✅ Firebase initialized successfully!")
+        db = firestore.client()
+    else:
+        print("⚠️ Firebase already initialized.")
+        db = firestore.client()
+
+except Exception as e:
+    print("❌ Firebase initialization failed!")
+    print("🔧 Error:", str(e))
+    db = None  # Continue without database
+
+print("---- Firebase Debug Log End ----\n")
 
 # Ensure static directory exists for QR codes
 os.makedirs("static", exist_ok=True)
